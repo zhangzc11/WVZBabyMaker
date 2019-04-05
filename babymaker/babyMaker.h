@@ -131,7 +131,7 @@ public:
     void SetYear();
     void CreateOutput();
     virtual void AddOutput();
-    void SetLeptonID();
+    virtual void SetLeptonID();
 
     void Process();
     void FillGenWeights();

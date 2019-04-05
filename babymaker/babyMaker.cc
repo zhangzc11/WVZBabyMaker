@@ -113,8 +113,8 @@ void babyMaker::ScanChain(bool verbose)
 //##############################################################################################################
 void babyMaker::Init()
 {
-    // Set year via "GlobalConfig gconf"
-    SetYear();
+    // get global configs
+    gconf.GetConfigsFromDatasetName(looper.getCurrentFileName());
 
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
     coreJec.setJECFor(looper.getCurrentFileName(), false);
@@ -127,31 +127,6 @@ void babyMaker::Init()
 
     // Set lepton ID configuration via "GlobalConfig gconf"
     SetLeptonID();
-}
-
-//##############################################################################################################
-void babyMaker::SetYear()
-{
-    TString filename = looper.getCurrentFileName();
-    if (
-            filename.Contains("Run2016")
-            || filename.Contains("Moriond17")
-            || filename.Contains("RunIISummer16")
-            || filename.Contains("run2_data2016")
-            || filename.Contains("run2_moriond17")
-       ) gconf.year = 2016;
-    if (
-            filename.Contains("Run2017")
-            || filename.Contains("RunIIFall17")
-            || filename.Contains("_mc2017_")
-            || filename.Contains("run2_mc2017")
-       ) gconf.year = 2017;
-    if (
-            filename.Contains("Run2018")
-            || filename.Contains("RunIISpring18")
-            || filename.Contains("RunIISummer18")
-            || filename.Contains("run2_mc2018")
-       ) gconf.year = 2018;
 }
 
 //##############################################################################################################

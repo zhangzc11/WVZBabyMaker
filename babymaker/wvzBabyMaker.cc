@@ -1,7 +1,5 @@
 #include "wvzBabyMaker.h"
 
-// #define USE_LEAD_JET_SCHEME
-
 //##############################################################################################################
 wvzBabyMaker::wvzBabyMaker() : processor(0)
 {
@@ -10,13 +8,39 @@ wvzBabyMaker::wvzBabyMaker() : processor(0)
 wvzBabyMaker::~wvzBabyMaker() {}
 
 //##############################################################################################################
+void wvzBabyMaker::SetLeptonID()
+{
+    if (gconf.year == 2016)
+    {
+        gconf.ea_version = 2;
+        gconf.el_addlep_veto = true;
+        gconf.el_reliso_veto = 0.4;
+        gconf.mu_addlep_veto = true;
+        gconf.mu_reliso_veto = 0.4;
+    }
+    else if (gconf.year == 2017)
+    {
+        gconf.ea_version = 4;
+        gconf.el_addlep_veto = true;
+        gconf.el_reliso_veto = 0.4;
+        gconf.mu_addlep_veto = true;
+        gconf.mu_reliso_veto = 0.4;
+    }
+    else if (gconf.year == 2018)
+    {
+        gconf.ea_version = 4;
+        gconf.el_addlep_veto = true;
+        gconf.el_reliso_veto = 0.4;
+        gconf.mu_addlep_veto = true;
+        gconf.mu_reliso_veto = 0.4;
+    }
+}
+
+//##############################################################################################################
 void wvzBabyMaker::ProcessObjectsPrePassSelection()
 {
     // Process leptons via CoreUtil
     ProcessLeptons();
-
-    // Process MET (recalculate etc.)
-    ProcessMET();
 
 }
 
@@ -24,8 +48,8 @@ void wvzBabyMaker::ProcessObjectsPrePassSelection()
 void wvzBabyMaker::ProcessObjectsPostPassSelection()
 {
 
-    // Fat jet
-    ProcessFatJets();
+    // Process MET (recalculate etc.)
+    ProcessMET();
 
     // Triggers
     ProcessTriggers();
@@ -44,13 +68,13 @@ void wvzBabyMaker::ProcessObjectsPostPassSelection()
 //##############################################################################################################
 void wvzBabyMaker::ProcessElectrons()
 {
-    coreElectron.process(isPt25Electron);
+    coreElectron.process(isPt10Electron);
 }
 
 //##############################################################################################################
 void wvzBabyMaker::ProcessMuons()
 {
-    coreMuon.process(isPt25Muon);
+    coreMuon.process(isPt10Muon);
 }
 
 //##############################################################################################################
@@ -86,44 +110,48 @@ void wvzBabyMaker::FillOutput()
 }
 
 //##############################################################################################################
-// Used to overlap remova against tracks
-bool wvzBabyMaker::isPt25Electron(int idx)
-{
-    if (!( cms3.els_p4()[idx].pt() > 25.          )) return false;
-    if (!( isPt10Electron(idx)                    )) return false;
-    return true;
-}
-
-//##############################################################################################################
-// Used to overlap remova against tracks
-bool wvzBabyMaker::isPt25Muon(int idx)
-{
-    if (!( cms3.mus_p4()[idx].pt() > 25.        )) return false;
-    if (!( isPt10Muon(idx)                      )) return false;
-    return true;
-}
-
-//##############################################################################################################
-// Used to overlap remova against tracks
+// Very Loose Lepton ID
 bool wvzBabyMaker::isPt10Electron(int idx)
 {
     if (!( cms3.els_p4()[idx].pt() > 10.          )) return false;
-    if (!( isVetoElectronPOGspring16noIso_v1(idx) )) return false;
+    if (gconf.year == 2017 or gconf.year == 2018)
+    {
+        if (!( isMVAHZZNoIsofall17(idx, true)     )) return false;
+    }
+    else
+    {
+        if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
+        {
+            if (!( getMVAoutput(idx)      > 0.6   )) return false;
+        }
+        else
+        {
+            if (!( getMVAoutput(idx)      > 0.    )) return false;
+        }
+    }
     if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;
-    if (!( elMiniRelIsoCMS3_EA(idx, 2) < 0.2      )) return false;
+    if (!( eleRelIso03EA(
+                    idx,
+                    gconf.ea_version,
+                    gconf.el_addlep_veto)
+                < gconf.el_reliso_veto            )) return false;
     if (!( fabs(cms3.els_dzPV()[idx]) < 0.1       )) return false;
     if (!( fabs(cms3.els_dxyPV()[idx]) < 0.05     )) return false;
     return true;
 }
 
 //##############################################################################################################
-// Used to overlap remova against tracks
+// Very Loose Lepton ID
 bool wvzBabyMaker::isPt10Muon(int idx)
 {
     if (!( cms3.mus_p4()[idx].pt() > 10.        )) return false;
     if (!( isLooseMuonPOG(idx)                  )) return false;
     if (!( fabs(cms3.mus_p4()[idx].eta()) < 2.5 )) return false;
-    if (!( muMiniRelIsoCMS3_EA(idx, 2) < 0.2    )) return false;
+    if (!( muRelIso03EA(
+                    idx,
+                    gconf.ea_version,
+                    gconf.mu_addlep_veto)
+                < gconf.mu_reliso_veto          )) return false;
     if (!( fabs(cms3.mus_dzPV()[idx]) < 0.1     )) return false;
     if (!( fabs(cms3.mus_dxyPV()[idx]) < 0.05   )) return false;
     return true;
@@ -140,7 +168,6 @@ bool wvzBabyMaker::isLeptonOverlappingWithJet(int ijet)
     {
         const LV& p4 = cms3.els_p4()[ilep];
         if (!( isPt10Electron(ilep) )) continue;
-        if (!( eleRelIso03EA(ilep, 2) < 0.4 )) continue;
         if (ROOT::Math::VectorUtil::DeltaR(jet_p4, p4) < 0.4)
         {
             is_overlapping = true;
@@ -152,7 +179,6 @@ bool wvzBabyMaker::isLeptonOverlappingWithJet(int ijet)
     {
         const LV& p4 = cms3.mus_p4()[ilep];
         if (!( isPt10Muon(ilep) )) continue;
-        if (!( muRelIso03EA(ilep, 2) < 0.4 )) continue;
         if (ROOT::Math::VectorUtil::DeltaR(jet_p4, p4) < 0.4)
         {
             is_overlapping = true;

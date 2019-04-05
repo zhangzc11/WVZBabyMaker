@@ -11,6 +11,8 @@ class wvzBabyMaker: public babyMaker
 
         RooUtil::Processor* processor;
 
+        virtual void SetLeptonID();
+
         virtual void ProcessObjectsPrePassSelection();
         virtual void ProcessObjectsPostPassSelection();
         virtual void ProcessElectrons();
@@ -20,8 +22,6 @@ class wvzBabyMaker: public babyMaker
         virtual void AddOutput();
         virtual void FillOutput();
 
-        static bool isPt25Electron(int idx);
-        static bool isPt25Muon(int idx);
         static bool isPt10Electron(int idx);
         static bool isPt10Muon(int idx);
         bool isLeptonOverlappingWithJet(int ijet);
