@@ -9,74 +9,65 @@
 void wvzModule::TriggerModule::AddOutput()
 {
     // Triggers
-
-    // Electron
-    tx->createBranch<int>("HLT_Ele27_WPLoose_Gsf");
-    tx->createBranch<int>("HLT_Ele30_WPLoose_Gsf");
-    tx->createBranch<int>("HLT_Ele45_WPLoose_Gsf");
-    tx->createBranch<int>("HLT_Ele105_CaloIdVT_GsfTrkIdT");
-    tx->createBranch<int>("HLT_Ele115_CaloIdVT_GsfTrkIdT");
-
-    // Muon
-    tx->createBranch<int>("HLT_IsoTkMu24");
-    tx->createBranch<int>("HLT_IsoMu24");
-
-    // Triggers
-    tx->createBranch<int>("HLT_SingleMu50");
-    tx->createBranch<int>("HLT_SingleEl40");
-    tx->createBranch<int>("HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165");
-    tx->createBranch<int>("HLT_Mu50");
-    tx->createBranch<int>("HLT_TkMu50");
-    tx->createBranch<int>("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
-    tx->createBranch<int>("HLT_AK8PFJet360_TrimMass30");
-    tx->createBranch<int>("HLT_PFHT800");
-    tx->createBranch<int>("HLT_PFHT900");
-    tx->createBranch<int>("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
-    tx->createBranch<int>("HLT_PFHT650_WideJetMJJ950DEtaJJ1p5");
-    tx->createBranch<int>("HLT_AK8PFDiJet280_200_TrimMass30_CSVM_0p20");
+    tx->createBranch<int>("HLT_DoubleMu");
+    tx->createBranch<int>("HLT_DoubleEl");
+    tx->createBranch<int>("HLT_MuEG");
 
     // duplicate removal bits
-    tx->createBranch<int>("pass_duplicate_se_sm");
-    tx->createBranch<int>("pass_duplicate_sm_se");
+    tx->createBranch<int>("pass_duplicate_ee_em_mm");
+    tx->createBranch<int>("pass_duplicate_mm_em_ee");
 }
 
 void wvzModule::TriggerModule::FillOutput()
 {
-    tx->setBranch<int>("HLT_Ele27_WPLoose_Gsf", passHLTTriggerPattern("HLT_Ele27_WPLoose_Gsf_v"));
-    tx->setBranch<int>("HLT_Ele30_WPLoose_Gsf", passHLTTriggerPattern("HLT_Ele30_WPLoose_Gsf_v"));
-    tx->setBranch<int>("HLT_Ele45_WPLoose_Gsf", passHLTTriggerPattern("HLT_Ele45_WPLoose_Gsf_v"));
-    tx->setBranch<int>("HLT_Ele105_CaloIdVT_GsfTrkIdT", passHLTTriggerPattern("HLT_Ele105_CaloIdVT_GsfTrkIdT_v"));
-    tx->setBranch<int>("HLT_Ele115_CaloIdVT_GsfTrkIdT", passHLTTriggerPattern("HLT_Ele115_CaloIdVT_GsfTrkIdT_v"));
-
-    // Muon
-    tx->setBranch<int>("HLT_IsoTkMu24", passHLTTriggerPattern("HLT_IsoTkMu24_v"));
-    tx->setBranch<int>("HLT_IsoMu24", passHLTTriggerPattern("HLT_IsoMu24_v"));
-
     // Triggers
-    int HLT_Ele40_WPTight_Gsf                      = passHLTTriggerPattern("HLT_Ele40_WPTight_Gsf_v");
-    int HLT_Mu50                                   = passHLTTriggerPattern("HLT_Mu50_v");
-    int HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165      = passHLTTriggerPattern("HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v");
-    int HLT_TkMu50                                 = passHLTTriggerPattern("HLT_TkMu50_v");
-    int HLT_AK8PFHT700_TrimR0p1PT0p03Mass50        = passHLTTriggerPattern("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
-    int HLT_AK8PFJet360_TrimMass30                 = passHLTTriggerPattern("HLT_AK8PFJet360_TrimMass30_v");
-    int HLT_PFHT800                                = passHLTTriggerPattern("HLT_PFHT800_v");
-    int HLT_PFHT900                                = passHLTTriggerPattern("HLT_PFHT900_v");
-    int HLT_PFHT650_WideJetMJJ900DEtaJJ1p5         = passHLTTriggerPattern("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
-    int HLT_PFHT650_WideJetMJJ950DEtaJJ1p5         = passHLTTriggerPattern("HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v");
-    int HLT_AK8PFDiJet280_200_TrimMass30_CSVM_0p20 = passHLTTriggerPattern("HLT_AK8PFDiJet280_200_TrimMass30_CSVM_0p20_v");
+    tx->createBranch<int>("HLT_DoubleMu");
+    tx->createBranch<int>("HLT_DoubleEl");
+    tx->createBranch<int>("HLT_MuEG");
 
-    tx->setBranch<int>("HLT_SingleEl40"                             , HLT_Ele40_WPTight_Gsf);
-    tx->setBranch<int>("HLT_SingleMu50"                             , HLT_Mu50);
-    tx->setBranch<int>("HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165"      , HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165);
-    tx->setBranch<int>("HLT_Mu50"                                   , HLT_Mu50);
-    tx->setBranch<int>("HLT_TkMu50"                                 , HLT_TkMu50);
-    tx->setBranch<int>("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50"        , HLT_AK8PFHT700_TrimR0p1PT0p03Mass50);
-    tx->setBranch<int>("HLT_AK8PFJet360_TrimMass30"                 , HLT_AK8PFJet360_TrimMass30);
-    tx->setBranch<int>("HLT_PFHT800"                                , HLT_PFHT800);
-    tx->setBranch<int>("HLT_PFHT900"                                , HLT_PFHT900);
-    tx->setBranch<int>("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5"         , HLT_PFHT650_WideJetMJJ900DEtaJJ1p5);
-    tx->setBranch<int>("HLT_PFHT650_WideJetMJJ950DEtaJJ1p5"         , HLT_PFHT650_WideJetMJJ950DEtaJJ1p5);
-    tx->setBranch<int>("HLT_AK8PFDiJet280_200_TrimMass30_CSVM_0p20" , HLT_AK8PFDiJet280_200_TrimMass30_CSVM_0p20);
+        if (gconf.year == 2016)
+        {
+            tx->setBranch<int>("HLT_DoubleMu"                  , coreTrigger.HLT_DoubleMu                  );
+            tx->setBranch<int>("HLT_DoubleEl_DZ_2"             , coreTrigger.HLT_DoubleEl_DZ_2             );
+            tx->setBranch<int>("HLT_MuEG"                      , coreTrigger.HLT_MuEG                      );
+        }
+
+        else if (gconf.year == 2017)
+        {
+            tx->setBranch<int>("HLT_DoubleMu"                  , coreTrigger.HLT_DoubleMu_2017             );
+            tx->setBranch<int>("HLT_DoubleEl"                  , coreTrigger.HLT_DoubleEl_2017             );
+            tx->setBranch<int>("HLT_DoubleEl_DZ"               , coreTrigger.HLT_DoubleEl_DZ               );
+            tx->setBranch<int>("HLT_DoubleEl_DZ_2"             , coreTrigger.HLT_DoubleEl_DZ_2             );
+            tx->setBranch<int>("HLT_MuEG"                      , coreTrigger.HLT_MuEG_2017                 );
+            tx->setBranch<int>("HLT_MuEG_2016"                 , coreTrigger.HLT_MuEG                      );
+            tx->setBranch<int>("HLT_SingleEl8"                 , coreTrigger.HLT_SingleEl8_2017            );
+            tx->setBranch<int>("HLT_SingleEl17"                , coreTrigger.HLT_SingleEl17_2017           );
+            tx->setBranch<int>("HLT_SingleIsoEl8"              , coreTrigger.HLT_SingleIsoEl8_2017         );
+            tx->setBranch<int>("HLT_SingleIsoEl17"             , coreTrigger.HLT_SingleIsoEl17             );
+            tx->setBranch<int>("HLT_SingleIsoEl23"             , coreTrigger.HLT_SingleIsoEl23_2017        );
+            tx->setBranch<int>("HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2017         );
+            tx->setBranch<int>("HLT_SingleIsoMu17"             , coreTrigger.HLT_SingleIsoMu17_2017        );
+            tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight" , coreTrigger.HLT_PFMET140_PFMHT140_IDTight );
+        }
+
+        else if (gconf.year == 2018)
+        {
+            tx->setBranch<int>("HLT_DoubleMu"                  , coreTrigger.HLT_DoubleMu_2018             );
+            tx->setBranch<int>("HLT_DoubleEl"                  , coreTrigger.HLT_DoubleEl_2018             );
+            tx->setBranch<int>("HLT_DoubleEl_DZ"               , coreTrigger.HLT_DoubleEl_DZ               );
+            tx->setBranch<int>("HLT_DoubleEl_DZ_2"             , coreTrigger.HLT_DoubleEl_DZ_2             );
+            tx->setBranch<int>("HLT_MuEG"                      , coreTrigger.HLT_MuEG_2018                 );
+            tx->setBranch<int>("HLT_MuEG_2016"                 , coreTrigger.HLT_MuEG                      );
+            tx->setBranch<int>("HLT_SingleEl8"                 , coreTrigger.HLT_SingleEl8_2018            );
+            tx->setBranch<int>("HLT_SingleEl17"                , coreTrigger.HLT_SingleEl17_2018           );
+            tx->setBranch<int>("HLT_SingleIsoEl8"              , coreTrigger.HLT_SingleIsoEl8_2018         );
+            tx->setBranch<int>("HLT_SingleIsoEl17"             , coreTrigger.HLT_SingleIsoEl17             );
+            tx->setBranch<int>("HLT_SingleIsoEl23"             , coreTrigger.HLT_SingleIsoEl23_2018        );
+            tx->setBranch<int>("HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2018         );
+            tx->setBranch<int>("HLT_SingleIsoMu17"             , coreTrigger.HLT_SingleIsoMu17_2018        );
+            tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight" , coreTrigger.HLT_PFMET140_PFMHT140_IDTight );
+        }
+
 
     int pass_duplicate_se_sm = 0;
     int pass_duplicate_sm_se = 0;
