@@ -23,23 +23,23 @@ void wvzModule::TriggerModule::FillOutput()
 
     if (gconf.year == 2016)
     {
-        tx->setBranch<int>("HLT_DoubleMu" , coreTrigger.HLT_DoubleMu                                );
-        tx->setBranch<int>("HLT_DoubleEl" , coreTrigger.HLT_DoubleEl || coreTrigger.HLT_DoubleEl_DZ );
-        tx->setBranch<int>("HLT_MuEG"     , coreTrigger.HLT_MuEG                                    );
+        tx->setBranch<int>("HLT_DoubleMu" , babymaker->coreTrigger.HLT_DoubleMu                                           );
+        tx->setBranch<int>("HLT_DoubleEl" , babymaker->coreTrigger.HLT_DoubleEl || babymaker->coreTrigger.HLT_DoubleEl_DZ );
+        tx->setBranch<int>("HLT_MuEG"     , babymaker->coreTrigger.HLT_MuEG                                               );
     }
 
     else if (gconf.year == 2017)
     {
-        tx->setBranch<int>("HLT_DoubleMu" , coreTrigger.HLT_DoubleMu_2017 );
-        tx->setBranch<int>("HLT_DoubleEl" , coreTrigger.HLT_DoubleEl_2017 );
-        tx->setBranch<int>("HLT_MuEG"     , coreTrigger.HLT_MuEG_2017     );
+        tx->setBranch<int>("HLT_DoubleMu" , babymaker->coreTrigger.HLT_DoubleMu_2017 );
+        tx->setBranch<int>("HLT_DoubleEl" , babymaker->coreTrigger.HLT_DoubleEl_2017 );
+        tx->setBranch<int>("HLT_MuEG"     , babymaker->coreTrigger.HLT_MuEG_2017     );
     }
 
     else if (gconf.year == 2018)
     {
-        tx->setBranch<int>("HLT_DoubleMu" , coreTrigger.HLT_DoubleMu_2018 );
-        tx->setBranch<int>("HLT_DoubleEl" , coreTrigger.HLT_DoubleEl_2018 );
-        tx->setBranch<int>("HLT_MuEG"     , coreTrigger.HLT_MuEG_2018     );
+        tx->setBranch<int>("HLT_DoubleMu" , babymaker->coreTrigger.HLT_DoubleMu_2018 );
+        tx->setBranch<int>("HLT_DoubleEl" , babymaker->coreTrigger.HLT_DoubleEl_2018 );
+        tx->setBranch<int>("HLT_MuEG"     , babymaker->coreTrigger.HLT_MuEG_2018     );
     }
 
     bool trig_ee = true;
@@ -48,21 +48,21 @@ void wvzModule::TriggerModule::FillOutput()
 
     if (gconf.year == 2016)
     {
-        trig_ee = coreTrigger.HLT_DoubleEl || coreTrigger.HLT_DoubleEl_DZ;
-        trig_em = coreTrigger.HLT_MuEG;
-        trig_mm = coreTrigger.HLT_DoubleMu;
+        trig_ee = babymaker->coreTrigger.HLT_DoubleEl || babymaker->coreTrigger.HLT_DoubleEl_DZ;
+        trig_em = babymaker->coreTrigger.HLT_MuEG;
+        trig_mm = babymaker->coreTrigger.HLT_DoubleMu;
     }
     else if (gconf.year == 2017)
     {
-        trig_ee = coreTrigger.HLT_DoubleEl_2017;
-        trig_em = coreTrigger.HLT_MuEG_2017;
-        trig_mm = coreTrigger.HLT_DoubleMu_2017;
+        trig_ee = babymaker->coreTrigger.HLT_DoubleEl_2017;
+        trig_em = babymaker->coreTrigger.HLT_MuEG_2017;
+        trig_mm = babymaker->coreTrigger.HLT_DoubleMu_2017;
     }
     else if (gconf.year == 2018)
     {
-        trig_ee = coreTrigger.HLT_DoubleEl_2018;
-        trig_em = coreTrigger.HLT_MuEG_2018;
-        trig_mm = coreTrigger.HLT_DoubleMu_2018;
+        trig_ee = babymaker->coreTrigger.HLT_DoubleEl_2018;
+        trig_em = babymaker->coreTrigger.HLT_MuEG_2018;
+        trig_mm = babymaker->coreTrigger.HLT_DoubleMu_2018;
     }
 
     bool is_pd_ee = (babymaker->looper.getCurrentFileName().Contains("DoubleEG") || babymaker->looper.getCurrentFileName().Contains("EGamma"));

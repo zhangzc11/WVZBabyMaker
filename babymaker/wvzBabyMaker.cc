@@ -97,6 +97,7 @@ void wvzBabyMaker::AddOutput()
     processor->AddModule(new wvzModule::EventModule(this));
     processor->AddModule(new wvzModule::LeptonModule(this));
     processor->AddModule(new wvzModule::METModule(this));
+    processor->AddModule(new wvzModule::JetModule(this));
 
     // Now create the outputs to the ttree
     processor->AddOutputs();

@@ -3,6 +3,7 @@
 
 #include "rooutil.h"
 #include "wvzBabyMaker.h"
+#include "JetSelections.h"
 
 namespace wvzModule
 {

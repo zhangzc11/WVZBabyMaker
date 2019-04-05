@@ -9,31 +9,98 @@
 void wvzModule::JetModule::AddOutput()
 {
 
+    tx->createBranch<vector<LV>>("jets_p4");
+    tx->createBranch<vector<float>>("jets_pt");
+    tx->createBranch<vector<float>>("jets_eta");
+    tx->createBranch<vector<float>>("jets_phi");
+    tx->createBranch<vector<float>>("jets_mass");
+
+    tx->createBranch<int>("nj");
+    tx->createBranch<int>("nb");
+    tx->createBranch<int>("nbmed");
+    tx->createBranch<float>("ht");
+
+    tx->createBranch<float>("weight_btagsf");
+    tx->createBranch<float>("weight_btagsf_heavy_DN");
+    tx->createBranch<float>("weight_btagsf_heavy_UP");
+    tx->createBranch<float>("weight_btagsf_light_DN");
+    tx->createBranch<float>("weight_btagsf_light_UP");
+
 }
 
 void wvzModule::JetModule::FillOutput()
 {
 
+    // Variables to compute and fill to the ttree output
+    int nj = 0;
+    int nb = 0;
+    int nbmed = 0;
+    float ht = 0;
+
+    // Clear SF
+    babymaker->coreBtagSF.clearSF();
+
     // Loop over selected jets
+    // coreJet.index contains index to the jets in cms3.pfjets_p4() vector
     for (unsigned ijet = 0; ijet < babymaker->coreJet.index.size(); ++ijet)
     {
+        // Get the index
         int idx = babymaker->coreJet.index[ijet];
+
+        // Get the JEC correction
         float corr = babymaker->coreJet.corrs[ijet];
+
+        if (gconf.year == 2016)
+        {
+            if (!isLoosePFJet_Summer16_v1(idx)) { continue; }
+        }
+        else if (gconf.year == 2017)
+        {
+            if (!isTightPFJet_2017_v1(idx)) { continue; }
+        }
+        else if (gconf.year == 2018)
+        {
+            if (!isTightPFJet_2018_v1(idx)) { continue; }
+        }
+
+        // Get the JEC shift
         // float shift = babymaker->coreJet.shifts[ijet];
-        float current_csv_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+
+        static TString deepCSV_prefix = "NULL";
+        if (deepCSV_prefix == "NULL")
+        {
+            for (TString discName : cms3.pfjets_bDiscriminatorNames())
+            {
+                if (discName.Contains("pfDeepCSV"))    // 2017 convention
+                {
+                    deepCSV_prefix = "pfDeepCSV";
+                    break;
+                }
+                else if (discName.Contains("deepFlavour"))    // 2016 convention
+                {
+                    deepCSV_prefix = "deepFlavour";
+                    break;
+                }
+            } // end loop over b discriminator names
+            if (deepCSV_prefix == "NULL")
+            {
+                cout << "Error:" << __FUNCTION__ << "Can't find DeepCSV discriminator names!" << endl;
+                exit(1);
+            }
+        }
+
+        // Get the b-tagging value
+        float current_btag_score_val = -2;
+        if (gconf.year == 2016)
+            current_btag_score_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+        else if (gconf.year == 2017 || gconf.year == 2018)
+            current_btag_score_val = cms3.getbtagvalue(deepCSV_prefix + "JetTags:probb", ijet) + cms3.getbtagvalue(deepCSV_prefix + "JetTags:probbb", ijet);
+
         LV jet = cms3.pfjets_p4()[idx] * cms3.pfjets_undoJEC()[idx] * corr;
 
         // Check whether this jet overlaps with any of the leptons
         if (babymaker->isLeptonOverlappingWithJet(ijet))
             continue;
-
-        // Compute dphi to determine which hemisphere the jet is at
-        float dphi = RooUtil::Calc::DeltaPhi(jet, LXJ_p4);
-        float dphi_SD = RooUtil::Calc::DeltaPhi(jet, LXJ_SD_p4);
-
-        // Compute dR to determine whether the jets are inside the tagged fat-jet
-        float dr_J = RooUtil::Calc::DeltaR(jet, J_p4);
-        float dr_SD_J = RooUtil::Calc::DeltaR(jet, J_SD_p4);
 
         // The pt of the jet
         float pt = jet.pt();
@@ -42,215 +109,58 @@ void wvzModule::JetModule::FillOutput()
         if (jet.pt() > 30)
         {
 
-            tx->pushbackToBranch<float>("j_dphis", dphi);
-            tx->pushbackToBranch<float>("j_drs", dr_J);
-            tx->pushbackToBranch<float>("j_SD_dphis", dphi_SD);
-            tx->pushbackToBranch<float>("j_SD_drs", dr_SD_J);
-            tx->pushbackToBranch<float>("j_pts", pt);
-
             // Increase the counter for the number of jets
             nj++;
             ht += pt;
 
-            // Sum the "Recoil" jets
-            R_p4 += jet;
-            if (fabs(jet.eta()) < 2.5)
-                R_cent_p4 += jet;
-
-            if (fabs(dphi) < TMath::Pi()/2. and dr_J < 0.8)
-            {
-                nj_in++;
-                ht_in += pt;
-            }
-            else if (fabs(dphi) < TMath::Pi()/2. and dr_J < 1.2)
-            {
-                nj_annuli++;
-                ht_annuli += pt;
-            }
-            else if (fabs(dphi) < TMath::Pi()/2. and dr_J > 1.2)
-            {
-                nj_same++;
-                ht_same += pt;
-            }
-            else
-            {
-                nj_away++;
-                ht_away += pt;
-            }
-
-            if (fabs(dphi_SD) < TMath::Pi()/2. and dr_SD_J < 0.8)
-            {
-                nj_SD_in++;
-                ht_SD_in += pt;
-            }
-            else if (fabs(dphi_SD) < TMath::Pi()/2. and dr_SD_J < 1.2)
-            {
-                nj_SD_annuli++;
-                ht_SD_annuli += pt;
-            }
-            else if (fabs(dphi_SD) < TMath::Pi()/2. and dr_SD_J > 1.2)
-            {
-                nj_SD_same++;
-                ht_SD_same += pt;
-            }
-            else
-            {
-                nj_SD_away++;
-                ht_SD_away += pt;
-            }
-
-            babymaker->coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
-
-            // if (!isFastSim())
-            //     babymaker->coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
-            // else
-            //     babymaker->coreBtagSFFastSim.accumulateSF(idx, jet.pt(), jet.eta());
-
         }
 
-        const double bjet_CSV_TIGHT = 0.9535;
-        const double bjet_CSV_MED = 0.8484;
-        const double bjet_CSV_LOOSE = 0.5426;
+        float btag_loose_threshold = -999;
+        if (gconf.year == 2016)
+            btag_loose_threshold = gconf.WP_CSVv2_LOOSE;
+        else if (gconf.year == 2017 or gconf.year == 2018)
+            btag_loose_threshold = gconf.WP_DEEPCSV_LOOSE;
+
+        float btag_medium_threshold = -999;
+        if (gconf.year == 2016)
+            btag_medium_threshold = gconf.WP_CSVv2_MEDIUM;
+        else if (gconf.year == 2017 or gconf.year == 2018)
+            btag_medium_threshold = gconf.WP_DEEPCSV_MEDIUM;
 
         // Counting N-btag jets: Require minimum of 20 GeV for increased acceptance
         if (jet.pt() > 20. and fabs(jet.eta()) < 2.4)
         {
 
             // Increase the counter for the number of b-jets
-            if (current_csv_val >= bjet_CSV_LOOSE) nb++;
-            if (current_csv_val >= bjet_CSV_MED) nbmed++;
-            if (current_csv_val >= bjet_CSV_TIGHT) nbtight++;
+            if (current_btag_score_val >= btag_loose_threshold) nb++;
+            if (current_btag_score_val >= btag_medium_threshold) nbmed++;
 
-            if (fabs(dphi) < TMath::Pi()/2. and dr_J < 0.8)
-            {
-                if (current_csv_val >= bjet_CSV_LOOSE) nb_in++;
-                if (current_csv_val >= bjet_CSV_MED) nbmed_in++;
-                if (current_csv_val >= bjet_CSV_TIGHT) nbtight_in++;
-            }
-            else if (fabs(dphi) < TMath::Pi()/2. and dr_J < 1.2)
-            {
-                if (current_csv_val >= bjet_CSV_LOOSE) nb_annuli++;
-                if (current_csv_val >= bjet_CSV_MED) nbmed_annuli++;
-                if (current_csv_val >= bjet_CSV_TIGHT) nbtight_annuli++;
-            }
-            else if (fabs(dphi) < TMath::Pi()/2. and dr_J > 1.2)
-            {
-                if (current_csv_val >= bjet_CSV_LOOSE) nb_same++;
-                if (current_csv_val >= bjet_CSV_MED) nbmed_same++;
-                if (current_csv_val >= bjet_CSV_TIGHT) nbtight_same++;
-            }
-            else
-            {
-                if (current_csv_val >= bjet_CSV_LOOSE) nb_away++;
-                if (current_csv_val >= bjet_CSV_MED) nbmed_away++;
-                if (current_csv_val >= bjet_CSV_TIGHT) nbtight_away++;
-            }
-
-            if (fabs(dphi_SD) < TMath::Pi()/2. and dr_SD_J < 0.8)
-            {
-                if (current_csv_val >= bjet_CSV_LOOSE) nb_SD_in++;
-                if (current_csv_val >= bjet_CSV_MED) nbmed_SD_in++;
-                if (current_csv_val >= bjet_CSV_TIGHT) nbtight_SD_in++;
-            }
-            else if (fabs(dphi_SD) < TMath::Pi()/2. and dr_SD_J < 1.2)
-            {
-                if (current_csv_val >= bjet_CSV_LOOSE) nb_SD_annuli++;
-                if (current_csv_val >= bjet_CSV_MED) nbmed_SD_annuli++;
-                if (current_csv_val >= bjet_CSV_TIGHT) nbtight_SD_annuli++;
-            }
-            else if (fabs(dphi_SD) < TMath::Pi()/2. and dr_SD_J > 1.2)
-            {
-                if (current_csv_val >= bjet_CSV_LOOSE) nb_SD_same++;
-                if (current_csv_val >= bjet_CSV_MED) nbmed_SD_same++;
-                if (current_csv_val >= bjet_CSV_TIGHT) nbtight_SD_same++;
-            }
-            else
-            {
-                if (current_csv_val >= bjet_CSV_LOOSE) nb_SD_away++;
-                if (current_csv_val >= bjet_CSV_MED) nbmed_SD_away++;
-                if (current_csv_val >= bjet_CSV_TIGHT) nbtight_SD_away++;
-            }
+            babymaker->coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
 
         }
 
-        // LV jet_up = jet * (1. + shift);
-        // if (jet_up.pt() > 30)
-        // {
-        //     tx->pushbackToBranch<LV>("jets_up_p4", jet_up);
-        //     tx->pushbackToBranch<float>("jets_up_pt", jet_up.pt());
-        //     tx->pushbackToBranch<float>("jets_up_eta", jet_up.eta());
-        //     tx->pushbackToBranch<float>("jets_up_phi", jet_up.phi());
-        //     tx->pushbackToBranch<float>("jets_up_csv", current_csv_val);
-        // }
+        // Adding jets to the container
+        if (jet.pt() > 20.)
+        {
+            tx->pushbackToBranch<LV>("jets_p4", jet);
+            tx->pushbackToBranch<float>("jets_pt", jet.pt());
+            tx->pushbackToBranch<float>("jets_eta", jet.eta());
+            tx->pushbackToBranch<float>("jets_phi", jet.phi());
+            tx->pushbackToBranch<float>("jets_mass", jet.mass());
+        }
 
-        // LV jet_dn = jet * (1. - shift);
-        // if (jet_dn.pt() > 30)
-        // {
-        //     tx->pushbackToBranch<LV>("jets_dn_p4", jet_dn);
-        //     tx->pushbackToBranch<float>("jets_dn_pt", jet_dn.pt());
-        //     tx->pushbackToBranch<float>("jets_dn_eta", jet_dn.eta());
-        //     tx->pushbackToBranch<float>("jets_dn_phi", jet_dn.phi());
-        //     tx->pushbackToBranch<float>("jets_dn_csv", current_csv_val);
-        // }
 
-    }
+    } // End looping over jets
 
     tx->setBranch<int>("nj", nj);
-    tx->setBranch<int>("nj_in", nj_in);
-    tx->setBranch<int>("nj_annuli", nj_annuli);
-    tx->setBranch<int>("nj_same", nj_same);
-    tx->setBranch<int>("nj_away", nj_away);
-    tx->setBranch<int>("nj_SD_in", nj_SD_in);
-    tx->setBranch<int>("nj_SD_annuli", nj_SD_annuli);
-    tx->setBranch<int>("nj_SD_same", nj_SD_same);
-    tx->setBranch<int>("nj_SD_away", nj_SD_away);
     tx->setBranch<int>("nb", nb);
-    tx->setBranch<int>("nb_in", nb_in);
-    tx->setBranch<int>("nb_annuli", nb_annuli);
-    tx->setBranch<int>("nb_same", nb_same);
-    tx->setBranch<int>("nb_away", nb_away);
-    tx->setBranch<int>("nb_SD_in", nb_SD_in);
-    tx->setBranch<int>("nb_SD_annuli", nb_SD_annuli);
-    tx->setBranch<int>("nb_SD_same", nb_SD_same);
-    tx->setBranch<int>("nb_SD_away", nb_SD_away);
     tx->setBranch<int>("nbmed", nbmed);
-    tx->setBranch<int>("nbmed_in", nbmed_in);
-    tx->setBranch<int>("nbmed_annuli", nbmed_annuli);
-    tx->setBranch<int>("nbmed_same", nbmed_same);
-    tx->setBranch<int>("nbmed_away", nbmed_away);
-    tx->setBranch<int>("nbmed_SD_in", nbmed_SD_in);
-    tx->setBranch<int>("nbmed_SD_annuli", nbmed_SD_annuli);
-    tx->setBranch<int>("nbmed_SD_same", nbmed_SD_same);
-    tx->setBranch<int>("nbmed_SD_away", nbmed_SD_away);
-    tx->setBranch<int>("nbtight", nbtight);
-    tx->setBranch<int>("nbtight_in", nbtight_in);
-    tx->setBranch<int>("nbtight_annuli", nbtight_annuli);
-    tx->setBranch<int>("nbtight_same", nbtight_same);
-    tx->setBranch<int>("nbtight_away", nbtight_away);
-    tx->setBranch<int>("nbtight_SD_in", nbtight_SD_in);
-    tx->setBranch<int>("nbtight_SD_annuli", nbtight_SD_annuli);
-    tx->setBranch<int>("nbtight_SD_same", nbtight_SD_same);
-    tx->setBranch<int>("nbtight_SD_away", nbtight_SD_away);
     tx->setBranch<float>("ht", ht);
-    tx->setBranch<float>("ht_in", ht_in);
-    tx->setBranch<float>("ht_annuli", ht_annuli);
-    tx->setBranch<float>("ht_same", ht_same);
-    tx->setBranch<float>("ht_away", ht_away);
-    tx->setBranch<float>("ht_SD_in", ht_SD_in);
-    tx->setBranch<float>("ht_SD_annuli", ht_SD_annuli);
-    tx->setBranch<float>("ht_SD_same", ht_SD_same);
-    tx->setBranch<float>("ht_SD_away", ht_SD_away);
-    tx->setBranch<LV>("R_p4", R_p4);
-    tx->setBranch<float>("R_pt", R_p4.pt());
-    tx->setBranch<float>("R_eta", R_p4.eta());
-    tx->setBranch<float>("R_phi", R_p4.phi());
-    tx->setBranch<float>("R_mass", R_p4.mass());
-    tx->setBranch<float>("R_energy", R_p4.energy());
-    tx->setBranch<LV>("R_cent_p4", R_cent_p4);
-    tx->setBranch<float>("R_cent_pt", R_cent_p4.pt());
-    tx->setBranch<float>("R_cent_eta", R_cent_p4.eta());
-    tx->setBranch<float>("R_cent_phi", R_cent_p4.phi());
-    tx->setBranch<float>("R_cent_mass", R_cent_p4.mass());
-    tx->setBranch<float>("R_cent_energy", R_cent_p4.energy());
+
+    tx->setBranch<float>("weight_btagsf"         , babymaker->coreBtagSF.btagprob_data     / babymaker->coreBtagSF.btagprob_mc);
+    tx->setBranch<float>("weight_btagsf_heavy_DN", babymaker->coreBtagSF.btagprob_heavy_DN / babymaker->coreBtagSF.btagprob_mc);
+    tx->setBranch<float>("weight_btagsf_heavy_UP", babymaker->coreBtagSF.btagprob_heavy_UP / babymaker->coreBtagSF.btagprob_mc);
+    tx->setBranch<float>("weight_btagsf_light_DN", babymaker->coreBtagSF.btagprob_light_DN / babymaker->coreBtagSF.btagprob_mc);
+    tx->setBranch<float>("weight_btagsf_light_UP", babymaker->coreBtagSF.btagprob_light_UP / babymaker->coreBtagSF.btagprob_mc);
 
 }
