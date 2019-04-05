@@ -1,1 +1,1 @@
-# WVZBabyMaker
+    source setup.sh
