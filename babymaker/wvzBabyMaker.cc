@@ -81,6 +81,8 @@ void wvzBabyMaker::ProcessMuons()
 // Goal is to pass events with at least one fat jet and one lepton
 bool wvzBabyMaker::PassSelection()
 {
+    if (coreElectron.index.size() + coreMuon.index.size() < 4)
+        return false;
     return true;
 }
 
