@@ -85,64 +85,95 @@ export LD_LIBRARY_PATH=$PWD/fastjet/fastjet-install/lib:$LD_LIBRARY_PATH
 echo ">>> export COREDIR=$PWD/CORE/"
 export COREDIR=$PWD/CORE/
 echo ">>> ./processBaby ${INPUTFILENAMES} -1"
-INPUTFILES=$(echo ${INPUTFILENAMES} | tr ',' ' ')
+
+# Output job index
+INDEX=1
+
+# Check is data?
 ISDATA=false
 if [[ ${INPUTFILENAMES} == *Run201* ]]; then
     ISDATA=true
 fi
-INDEX=1
-for file in $INPUTFILES; do
-    ./processBaby "$file" -1 ${INDEX} &
-    JOBS[${INDEX}]=$!
-    FILES[${INDEX}]="$file"
-    INDEX=$((INDEX + 1))
-done
-GOODOUTPUTS=""
-INDEX=1
-HASBADJOB=false
-NFAILED=0
-for job in "${JOBS[@]}"; do
-    wait $job
-    JOBSTATUS=$?
+
+# Run the job
+./processBaby ${INPUTFILENAMES} -1
+
+# Check output status
+JOBSTATUS=$?
+
+# Check output status
+if [ $JOBSTATUS -eq 0 ]; then
     echo ""
-    echo "Job #${INDEX} Exit Code = $JOBSTATUS"
+    echo "Job #${INDEX} Success "${INPUTFILENAMES}
     echo ""
-    if [ $JOBSTATUS -eq 0 ]; then
-        echo ""
-        echo "Job #${INDEX} Success "${FILES[${INDEX}]}
-        echo ""
-        GOODOUTPUTS="${GOODOUTPUTS} output_${INDEX}.root"
-    else
-        echo ""
-        echo "Job #${INDEX} Failed "${FILES[${INDEX}]}
-        echo ""
-        HASBADJOB=true
-        NFAILED=$((NFAILED+1))
-    fi
-    INDEX=$((INDEX+1))
-done
-if [ "$ISDATA" = true ]; then
-    if [ "$HASBADJOB" = false ]; then
-        hadd -f output.root ${GOODOUTPUTS}
-    else
-        echo "[ERROR::HASBADJOB] This is a data sample. So it is pertinent to have EVERY job succeed."
-        echo "[ERROR::HASBADJOB] This set of job has ${NFAILED} failed job. So will not produce output.root nor copy it to hadoop."
-        exit
-    fi
 else
-    if [ ${NFAILED} -le 1 ]; then
-        if [ -z ${GOODOUTPUTS} ]; then
-            echo "[ERROR::HASBADJOB] This is a MC sample. But no inputs succeeded!"
-            exit
-        else
-            hadd -f output.root ${GOODOUTPUTS}
-        fi
-    else
-        echo "[ERROR::HASBADJOB] This is a MC sample. so it is less pertinent to have EVERY job succeed."
-        echo "[ERROR::HASBADJOB] This set of job has ${NFAILED} failed job more than 1. So will not produce output.root nor copy it to hadoop."
-        exit
-    fi
+    echo ""
+    echo "Job #${INDEX} Failed "${INPUTFILENAMES}
+    echo ""
+    exit
 fi
+
+cp output_${INDEX}.root output.root
+
+
+# INPUTFILES=$(echo ${INPUTFILENAMES} | tr ',' ' ')
+# ISDATA=false
+# if [[ ${INPUTFILENAMES} == *Run201* ]]; then
+#     ISDATA=true
+# fi
+# INDEX=1
+# for file in $INPUTFILES; do
+#     ./processBaby "$file" -1 ${INDEX} &
+#     JOBS[${INDEX}]=$!
+#     FILES[${INDEX}]="$file"
+#     INDEX=$((INDEX + 1))
+# done
+# GOODOUTPUTS=""
+# INDEX=1
+# HASBADJOB=false
+# NFAILED=0
+# for job in "${JOBS[@]}"; do
+#     wait $job
+#     JOBSTATUS=$?
+#     echo ""
+#     echo "Job #${INDEX} Exit Code = $JOBSTATUS"
+#     echo ""
+#     if [ $JOBSTATUS -eq 0 ]; then
+#         echo ""
+#         echo "Job #${INDEX} Success "${FILES[${INDEX}]}
+#         echo ""
+#         GOODOUTPUTS="${GOODOUTPUTS} output_${INDEX}.root"
+#     else
+#         echo ""
+#         echo "Job #${INDEX} Failed "${FILES[${INDEX}]}
+#         echo ""
+#         HASBADJOB=true
+#         NFAILED=$((NFAILED+1))
+#     fi
+#     INDEX=$((INDEX+1))
+# done
+# if [ "$ISDATA" = true ]; then
+#     if [ "$HASBADJOB" = false ]; then
+#         hadd -f output.root ${GOODOUTPUTS}
+#     else
+#         echo "[ERROR::HASBADJOB] This is a data sample. So it is pertinent to have EVERY job succeed."
+#         echo "[ERROR::HASBADJOB] This set of job has ${NFAILED} failed job. So will not produce output.root nor copy it to hadoop."
+#         exit
+#     fi
+# else
+#     if [ ${NFAILED} -le 1 ]; then
+#         if [ -z ${GOODOUTPUTS} ]; then
+#             echo "[ERROR::HASBADJOB] This is a MC sample. But no inputs succeeded!"
+#             exit
+#         else
+#             hadd -f output.root ${GOODOUTPUTS}
+#         fi
+#     else
+#         echo "[ERROR::HASBADJOB] This is a MC sample. so it is less pertinent to have EVERY job succeed."
+#         echo "[ERROR::HASBADJOB] This set of job has ${NFAILED} failed job more than 1. So will not produce output.root nor copy it to hadoop."
+#         exit
+#     fi
+# fi
 
 ###################################################################################################
 # ProjectMetis/CondorTask specific (Copying files over to hadoop)

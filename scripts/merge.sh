@@ -50,11 +50,11 @@ mergeout_folder=$OUTPUTDIR/merged
 
 # Perform Merge
 # out_file=${mergeout_folder}/merged_${OUTPUTNAME}.root
-out_file=${OUTPUTNAME}.root
+out_file=${OUTPUTNAME}
 in_folder=${OUTPUTDIR}
 echo "Will merge $in_folder/*.root into $out_file"
-echo "python rooutil/hadd.py -t t -o ${out_file} ${in_folder}/*.root"
-python rooutil/hadd.py -t t -o ${out_file} ${in_folder}/*.root
+echo "sh rooutil/addHistos.sh ${out_file} ${in_folder}/output"
+sh rooutil/addHistos.sh ${out_file} ${in_folder}/output
 if [ $? -eq 0 ]; then
     echo "Successfully hadded files"
     :
@@ -70,12 +70,17 @@ echo ----------------------------------------------
 
 echo -e "\n--- end running ---\n" #                             <----- section division
 
-[[ ! -f ${OUTPUTNAME}_1.root ]] && mv ${OUTPUTNAME}.root ${OUTPUTNAME}_1.root
+# [[ ! -f ${OUTPUTNAME}_1.root ]] && mv ${OUTPUTNAME}.root ${OUTPUTNAME}_1.root
 
-# Copy back the output file
-for mergeout in ${OUTPUTNAME}*.root; do
-    gfal-copy -p -f -t 4200 --verbose file://`pwd`/$mergeout gsiftp://gftp.t2.ucsd.edu${mergeout_folder}/${mergeout} --checksum ADLER32
-done
+# # Copy back the output file
+# for mergeout in ${OUTPUTNAME}*.root; do
+#     gfal-copy -p -f -t 4200 --verbose file://`pwd`/$mergeout gsiftp://gftp.t2.ucsd.edu${mergeout_folder}/${mergeout} --checksum ADLER32
+# done
+
+# gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTNAME}.root gsiftp://gftp.t2.ucsd.edu${mergeout_folder}/${OUTPUTNAME}.root --checksum ADLER32
+
+mkdir -p ${mergeout_folder}
+cp ${OUTPUTNAME}.root ${mergeout_folder}/${OUTPUTNAME}_1.root
 
 echo -e "\n--- cleaning up ---\n" #                             <----- section division
 rm -r *.root

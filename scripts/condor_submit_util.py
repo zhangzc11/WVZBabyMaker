@@ -61,7 +61,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
                 tarfile              = tar_gz_path,
                 special_dir          = hadoop_path,
                 output_name          = "output.root",
-                files_per_output     = 1,
+                files_per_output     = 10,
                 condor_submit_params = {"sites" : "T2_US_UCSD"},
                 open_dataset         = False,
                 flush                = True,
@@ -89,7 +89,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
                     files_per_output       = 100000,
                     output_dir             = maker_task.get_outputdir() + "/merged",
                     output_name            = samples_dictionary[sample] + ".root",
-                    condor_submit_params   = {"sites":"T2_US_UCSD"},
+                    condor_submit_params   = {"sites":"UAF"},
                     output_is_tree         = True,
                     # check_expectedevents = True,
                     tag                    = job_tag,
@@ -114,7 +114,7 @@ def create_tar_ball():
     tar_gz_path = tar_path + ".gz"
     main_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(main_dir)
-    os.system("tar -chzf {} ../setup.sh ../processBaby ../coreutil/data ../CORE/Tools/ ../rooutil/*.sh".format(tar_gz_path))
+    os.system("tar -chzf {} ../setup.sh ../processBaby ../coreutil/data ../CORE/Tools/ ../rooutil/*.sh ../rooutil/hadd.py ../rooutil/addHistos.sh".format(tar_gz_path))
 
 #______________________________________________________________________________________
 def submit(dinfos, version_tag, dotestrun=False):
