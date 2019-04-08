@@ -13,25 +13,25 @@ void wvzBabyMaker::SetLeptonID()
     if (gconf.year == 2016)
     {
         gconf.ea_version = 2;
-        gconf.el_addlep_veto = true;
+        gconf.el_addlep_veto = false;
         gconf.el_reliso_veto = 0.4;
-        gconf.mu_addlep_veto = true;
+        gconf.mu_addlep_veto = false;
         gconf.mu_reliso_veto = 0.4;
     }
     else if (gconf.year == 2017)
     {
         gconf.ea_version = 4;
-        gconf.el_addlep_veto = true;
+        gconf.el_addlep_veto = false;
         gconf.el_reliso_veto = 0.4;
-        gconf.mu_addlep_veto = true;
+        gconf.mu_addlep_veto = false;
         gconf.mu_reliso_veto = 0.4;
     }
     else if (gconf.year == 2018)
     {
         gconf.ea_version = 4;
-        gconf.el_addlep_veto = true;
+        gconf.el_addlep_veto = false;
         gconf.el_reliso_veto = 0.4;
-        gconf.mu_addlep_veto = true;
+        gconf.mu_addlep_veto = false;
         gconf.mu_reliso_veto = 0.4;
     }
 }
