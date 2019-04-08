@@ -55,7 +55,7 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<float>("lep_dz", cms3.els_dzPV()[idx]);
         if (!cms3.evt_isRealData())
         {
-            pair<int, int> motherId_genIdx = lepMotherID_v2(Lep(cms3.mus_charge()[idx] * (-11), idx)); //don't forget the sign
+            pair<int, int> motherId_genIdx = lepMotherID_v2(Lep(cms3.els_charge()[idx] * (-11), idx)); //don't forget the sign
             int mc_id = 0;
             if (isFromW        (11, idx)) mc_id =  1;
             if (isFromZ        (11, idx)) mc_id =  2;

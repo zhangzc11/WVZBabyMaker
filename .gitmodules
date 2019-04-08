@@ -10,3 +10,4 @@
 [submodule "ProjectMetis"]
 	path = ProjectMetis
 	url = git@github.com:aminnj/ProjectMetis.git
+	ignore = dirty

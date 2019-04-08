@@ -76,8 +76,8 @@ else
 fi
 ###################################################################################################
 
-echo ">>> source localsetup.sh"
-source localsetup.sh
+echo ">>> source setup.sh"
+source setup.sh
 echo ">>> ls -l"
 ls -l
 echo ">>> export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/fastjet/fastjet-install/lib"
