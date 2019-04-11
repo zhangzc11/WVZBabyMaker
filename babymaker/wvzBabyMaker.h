@@ -10,6 +10,8 @@ class wvzBabyMaker: public babyMaker
         ~wvzBabyMaker();
 
         RooUtil::Processor* processor;
+        RooUtil::VarMap additional_elec_vars;
+        RooUtil::VarMap additional_muon_vars;
 
         virtual void SetLeptonID();
 

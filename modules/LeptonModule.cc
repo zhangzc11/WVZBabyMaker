@@ -28,6 +28,7 @@ void wvzModule::LeptonModule::AddOutput()
     tx->createBranch<vector<int>>("lep_id");
     tx->createBranch<vector<int>>("lep_isTightPOG");
     tx->createBranch<vector<int>>("lep_isMediumPOG");
+    tx->createBranch<vector<float>>("lep_mvaTTH");
 
 }
 
@@ -75,6 +76,14 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<int>("lep_id", cms3.els_charge()[idx]*(-11));
         tx->pushbackToBranch<int>("lep_isTightPOG", isMVAwp80NoIsofall17(idx, true));
         tx->pushbackToBranch<int>("lep_isMediumPOG", isMVAwp90NoIsofall17(idx, true));
+
+        // Getting TTH MVA variable from txt files generated from nanoAOD
+        std::vector<float> additional_vars = babymaker->additional_elec_vars.get({cms3.evt_event(), cms3.evt_lumiBlock(), cms3.evt_run()});
+        for (unsigned ii = 0; ii < additional_vars.size() - 1; ii += 2)
+        {
+            if (fabs(additional_vars[ii+1] - cms3.els_p4()[idx].pt()) < 0.01)
+                tx->pushbackToBranch<float>("lep_mvaTTH", additional_vars[ii]);
+        }
     }
 
     // I expect either one electron or one muon so it's ok to loop over
@@ -114,6 +123,14 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<int>("lep_id", cms3.mus_charge()[idx]*(-13));
         tx->pushbackToBranch<int>("lep_isTightPOG", isTightMuonPOG(idx));
         tx->pushbackToBranch<int>("lep_isMediumPOG", isMediumMuonPOG(idx));
+
+        // Getting TTH MVA variable from txt files generated from nanoAOD
+        std::vector<float> additional_vars = babymaker->additional_muon_vars.get({cms3.evt_event(), cms3.evt_lumiBlock(), cms3.evt_run()});
+        for (unsigned ii = 0; ii < additional_vars.size() - 1; ii += 2)
+        {
+            if (fabs(additional_vars[ii+1] - cms3.mus_p4()[idx].pt()) < 0.01)
+                tx->pushbackToBranch<float>("lep_mvaTTH", additional_vars[ii]);
+        }
     }
 
 }
