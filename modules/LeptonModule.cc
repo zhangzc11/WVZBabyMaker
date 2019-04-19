@@ -28,7 +28,7 @@ void wvzModule::LeptonModule::AddOutput()
     tx->createBranch<vector<int>>("lep_id");
     tx->createBranch<vector<int>>("lep_isTightPOG");
     tx->createBranch<vector<int>>("lep_isMediumPOG");
-    tx->createBranch<vector<float>>("lep_mvaTTH");
+    // tx->createBranch<vector<float>>("lep_mvaTTH");
 
 }
 
@@ -78,14 +78,14 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<int>("lep_isMediumPOG", isMVAwp90NoIsofall17(idx, true));
 
         // Getting TTH MVA variable from txt files generated from nanoAOD
-        std::vector<float> additional_vars = babymaker->additional_elec_vars.get({(int) cms3.evt_event(), (int) cms3.evt_lumiBlock(), (int) cms3.evt_run()});
-        float val_closest_mva = -999;
-        for (unsigned ii = 0; ii < additional_vars.size() - 1; ii += 2)
-        {
-            if (fabs(additional_vars[ii+1] - cms3.els_p4()[idx].pt()) < 0.01)
-                val_closest_mva = additional_vars[ii];
-        }
-        tx->pushbackToBranch<float>("lep_mvaTTH", val_closest_mva);
+        // std::vector<float> additional_vars = babymaker->additional_elec_vars.get({(int) cms3.evt_event(), (int) cms3.evt_lumiBlock(), (int) cms3.evt_run()});
+        // float val_closest_mva = -999;
+        // for (unsigned ii = 0; ii < additional_vars.size() - 1; ii += 2)
+        // {
+        //     if (fabs(additional_vars[ii+1] - cms3.els_p4()[idx].pt()) < 0.01)
+        //         val_closest_mva = additional_vars[ii];
+        // }
+        // tx->pushbackToBranch<float>("lep_mvaTTH", val_closest_mva);
     }
 
     // I expect either one electron or one muon so it's ok to loop over
@@ -127,14 +127,14 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<int>("lep_isMediumPOG", isMediumMuonPOG(idx));
 
         // Getting TTH MVA variable from txt files generated from nanoAOD
-        std::vector<float> additional_vars = babymaker->additional_muon_vars.get({(int) cms3.evt_event(), (int) cms3.evt_lumiBlock(), (int) cms3.evt_run()});
-        float val_closest_mva = -999;
-        for (unsigned ii = 0; ii < additional_vars.size() - 1; ii += 2)
-        {
-            if (fabs(additional_vars[ii+1] - cms3.mus_p4()[idx].pt()) < 0.01)
-                val_closest_mva = additional_vars[ii];
-        }
-        tx->pushbackToBranch<float>("lep_mvaTTH", val_closest_mva);
+        // std::vector<float> additional_vars = babymaker->additional_muon_vars.get({(int) cms3.evt_event(), (int) cms3.evt_lumiBlock(), (int) cms3.evt_run()});
+        // float val_closest_mva = -999;
+        // for (unsigned ii = 0; ii < additional_vars.size() - 1; ii += 2)
+        // {
+        //     if (fabs(additional_vars[ii+1] - cms3.mus_p4()[idx].pt()) < 0.01)
+        //         val_closest_mva = additional_vars[ii];
+        // }
+        // tx->pushbackToBranch<float>("lep_mvaTTH", val_closest_mva);
     }
 
     tx->sortVecBranchesByPt("lep_p4",
@@ -150,7 +150,7 @@ void wvzModule::LeptonModule::FillOutput()
             "lep_sip3d",
             "lep_dxy",
             "lep_dz",
-            "lep_mvaTTH"
+            // "lep_mvaTTH"
             },
             {
             "lep_mc_id",

@@ -11,14 +11,14 @@ wvzBabyMaker::~wvzBabyMaker() {}
 void wvzBabyMaker::SetLeptonID()
 {
 
-    TString fullpath = looper.getCurrentFileName();
-    TString dirname = gSystem->DirName(fullpath);
-    TString basename = gSystem->BaseName(dirname);
-    basename.ReplaceAll("pythia8", " ");
-    TString samplename = RooUtil::StringUtil::split(basename)[0] + "pythia8";
-    TString nanoaodpath = "/hadoop/cms/store/user/phchang/nanoaod/" + samplename;
-    additional_muon_vars.load(nanoaodpath + "/muonsv2.dat", ":", 3);
-    additional_elec_vars.load(nanoaodpath + "/electronsv2.dat", ":", 3);
+    // TString fullpath = looper.getCurrentFileName();
+    // TString dirname = gSystem->DirName(fullpath);
+    // TString basename = gSystem->BaseName(dirname);
+    // basename.ReplaceAll("pythia8", " ");
+    // TString samplename = RooUtil::StringUtil::split(basename)[0] + "pythia8";
+    // TString nanoaodpath = "/hadoop/cms/store/user/phchang/nanoaod/" + samplename;
+    // additional_muon_vars.load(nanoaodpath + "/muonsv2.dat", ":", 3);
+    // additional_elec_vars.load(nanoaodpath + "/electronsv2.dat", ":", 3);
 
     if (gconf.year == 2016)
     {
