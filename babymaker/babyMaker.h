@@ -115,6 +115,7 @@ public:
     TH1F* h_neventsinfile;
     RooUtil::TTreeX* tx;
     RooUtil::Looper<CMS3> looper;
+    RooUtil::EventList eventlist;
 
     std::string filename;
 
@@ -130,6 +131,8 @@ public:
     void Init();
     void SetYear();
     void CreateOutput();
+    virtual void SetEventList();
+    virtual bool PassEventList();
     virtual void AddOutput();
     virtual void SetLeptonID();
 

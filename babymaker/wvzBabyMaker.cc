@@ -8,6 +8,25 @@ wvzBabyMaker::wvzBabyMaker() : processor(0)
 wvzBabyMaker::~wvzBabyMaker() {}
 
 //##############################################################################################################
+void wvzBabyMaker::SetEventList()
+{
+    TString fullpath = looper.getCurrentFileName();
+    TString dirname = gSystem->DirName(fullpath);
+    TString basename = gSystem->BaseName(dirname);
+    basename.ReplaceAll("pythia8", " ");
+    TString samplename = RooUtil::StringUtil::split(basename)[0] + "pythia8";
+    TString nanoaodpath = "/hadoop/cms/store/user/phchang/nanoaod/" + samplename;
+    eventlist.load(nanoaodpath + "/eventlist.dat", ":");
+}
+
+//##############################################################################################################
+bool wvzBabyMaker::PassEventList()
+{
+    return eventlist.has(cms3.evt_lumiBlock(), cms3.evt_run(), 1);
+}
+
+
+//##############################################################################################################
 void wvzBabyMaker::SetLeptonID()
 {
 

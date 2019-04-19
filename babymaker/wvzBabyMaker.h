@@ -13,6 +13,9 @@ class wvzBabyMaker: public babyMaker
         RooUtil::VarMap additional_elec_vars;
         RooUtil::VarMap additional_muon_vars;
 
+        virtual void SetEventList();
+        virtual bool PassEventList();
+
         virtual void SetLeptonID();
 
         virtual void ProcessObjectsPrePassSelection();

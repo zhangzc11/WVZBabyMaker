@@ -67,6 +67,10 @@ void babyMaker::ScanChain(bool verbose)
             // The reason this is inside the loop is because it first need to access the file name before
             std::call_once(flag_init, &babyMaker::Init, this);
 
+            // In case we need to filter out events based on the event list
+            if (not PassEventList())
+                continue;
+
             // Now process the baby ntuples
             Process();
 
@@ -111,6 +115,17 @@ void babyMaker::ScanChain(bool verbose)
 }
 
 //##############################################################################################################
+void babyMaker::SetEventList()
+{
+}
+
+//##############################################################################################################
+bool babyMaker::PassEventList()
+{
+    return false;
+}
+
+//##############################################################################################################
 void babyMaker::Init()
 {
     // get global configs
@@ -127,6 +142,10 @@ void babyMaker::Init()
 
     // Set lepton ID configuration via "GlobalConfig gconf"
     SetLeptonID();
+
+    // Setup event list to filter
+    SetEventList();
+
 }
 
 //##############################################################################################################
