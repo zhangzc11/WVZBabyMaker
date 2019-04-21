@@ -26,7 +26,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
     # file/dir paths
     main_dir             = os.path.dirname(os.path.abspath(__file__))
     metis_path           = os.path.dirname(os.path.dirname(metis.__file__))
-    tar_path             = os.path.join(metis_path, "package.tar")
+    tar_path             = os.path.join(metis_path, "package_{}.tar".format(job_tag))
     tar_gz_path          = tar_path + ".gz"
     exec_path            = os.path.join(main_dir, "metis.sh")
     merge_exec_path      = os.path.join(main_dir, "merge.sh")
@@ -107,19 +107,22 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
     return tasks
 
 #______________________________________________________________________________________
-def create_tar_ball():
+def create_tar_ball(year, baby_type, baby_version_tag):
+
+    job_tag = "{}{}_{}".format(baby_type, year, baby_version_tag)
+
     # Create tarball
     metis_path = os.path.dirname(os.path.dirname(metis.__file__))
-    tar_path = os.path.join(metis_path, "package.tar")
+    tar_path = os.path.join(metis_path, "package_{}.tar".format(job_tag))
     tar_gz_path = tar_path + ".gz"
     main_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(main_dir)
-    os.system("tar -chzf {} ../setup.sh ../processBaby ../coreutil/data ../CORE/Tools/ ../rooutil/*.sh ../rooutil/hadd.py ../rooutil/addHistos.sh".format(tar_gz_path))
+    exists = os.path.isfile(tar_gz_path)
+    if not exists:
+        os.system("tar -chzf {} ../setup.sh ../processBaby ../coreutil/data ../CORE/Tools/ ../rooutil/*.sh ../rooutil/hadd.py ../rooutil/addHistos.sh".format(tar_gz_path))
 
 #______________________________________________________________________________________
 def submit(dinfos, version_tag, dotestrun=False):
-
-    create_tar_ball() # Create tar ball
 
     # Loop
     while True:
@@ -132,6 +135,8 @@ def submit(dinfos, version_tag, dotestrun=False):
 
         # Loop over all the campaigns
         for campaign in dinfos:
+
+            create_tar_ball(dinfos[campaign]["year"], dinfos[campaign]["baby_type"], version_tag) # Create tar ball
 
             # Get all the tasks for this campaign
             this_set_of_tasks = get_tasks(
@@ -157,7 +162,7 @@ def submit(dinfos, version_tag, dotestrun=False):
             task.process()
 
             # save some information for the dashboard
-            total_summary[task.tag]["[" + task.tag + "] " + task.get_sample().get_datasetname()] = task.get_task_summary()
+            total_summary[task.tag][task.get_sample().get_datasetname()] = task.get_task_summary()
 
             # Aggregate task complete booleans
             all_tasks_complete = all_tasks_complete and task.complete()
