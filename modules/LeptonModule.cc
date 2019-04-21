@@ -16,6 +16,7 @@ void wvzModule::LeptonModule::AddOutput()
     tx->createBranch<vector<float>>("lep_phi");
     tx->createBranch<vector<float>>("lep_energy");
     tx->createBranch<vector<float>>("lep_mva");
+    tx->createBranch<vector<float>>("lep_relIso04DB");
     tx->createBranch<vector<float>>("lep_relIso03EA");
     tx->createBranch<vector<float>>("lep_relIso03EAwLep");
     tx->createBranch<vector<float>>("lep_ip3d");
@@ -48,6 +49,7 @@ void wvzModule::LeptonModule::FillOutput()
             tx->pushbackToBranch<float>("lep_mva", getMVAoutput(idx));
         if (gconf.year == 2017 or gconf.year == 2018)
             tx->pushbackToBranch<float>("lep_mva", getMVAoutput(idx, true));
+        tx->pushbackToBranch<float>("lep_relIso04DB", -999);
         tx->pushbackToBranch<float>("lep_relIso03EA", eleRelIso03EA(idx, gconf.ea_version, false));
         tx->pushbackToBranch<float>("lep_relIso03EAwLep", eleRelIso03EA(idx, gconf.ea_version, true));
         tx->pushbackToBranch<float>("lep_ip3d", cms3.els_ip3d()[idx]);
@@ -97,6 +99,7 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<float>("lep_phi", cms3.mus_p4()[idx].phi());
         tx->pushbackToBranch<float>("lep_energy", cms3.mus_p4()[idx].energy());
         tx->pushbackToBranch<float>("lep_mva", 999);
+        tx->pushbackToBranch<float>("lep_relIso04DB", muRelIso04DB(idx));
         tx->pushbackToBranch<float>("lep_relIso03EA", muRelIso03EA(idx, gconf.ea_version, false));
         tx->pushbackToBranch<float>("lep_relIso03EAwLep", muRelIso03EA(idx, gconf.ea_version, true));
         tx->pushbackToBranch<float>("lep_ip3d", cms3.mus_ip3d()[idx]);
@@ -144,6 +147,7 @@ void wvzModule::LeptonModule::FillOutput()
             "lep_phi",
             "lep_energy",
             "lep_mva",
+            "lep_relIso04DB",
             "lep_relIso03EA",
             "lep_relIso03EAwLep",
             "lep_ip3d",
