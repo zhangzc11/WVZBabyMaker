@@ -46,7 +46,7 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<float>("lep_phi", cms3.els_p4()[idx].phi());
         tx->pushbackToBranch<float>("lep_energy", cms3.els_p4()[idx].energy());
         if (gconf.year == 2016)
-            tx->pushbackToBranch<float>("lep_mva", getMVAoutput(idx));
+            tx->pushbackToBranch<float>("lep_mva", cms3.els_VIDSpring16HZZMvaValue().at(idx));
         if (gconf.year == 2017 or gconf.year == 2018)
             tx->pushbackToBranch<float>("lep_mva", getMVAoutput(idx, true));
         tx->pushbackToBranch<float>("lep_relIso04DB", -999);
@@ -76,8 +76,8 @@ void wvzModule::LeptonModule::FillOutput()
         }
         tx->pushbackToBranch<int>("lep_idx", idx);
         tx->pushbackToBranch<int>("lep_id", cms3.els_charge()[idx]*(-11));
-        tx->pushbackToBranch<int>("lep_isTightPOG", isMVAwp80NoIsofall17(idx, true));
-        tx->pushbackToBranch<int>("lep_isMediumPOG", isMVAwp90NoIsofall17(idx, true));
+        tx->pushbackToBranch<int>("lep_isTightPOG", gconf.year == 2016 ? getMVAoutput(idx) : isMVAwp80NoIsofall17(idx, true));
+        tx->pushbackToBranch<int>("lep_isMediumPOG", gconf.year == 2016 ? getMVAoutput(idx) : isMVAwp90NoIsofall17(idx, true));
 
         // Getting TTH MVA variable from txt files generated from nanoAOD
         // std::vector<float> additional_vars = babymaker->additional_elec_vars.get({(int) cms3.evt_event(), (int) cms3.evt_lumiBlock(), (int) cms3.evt_run()});

@@ -133,13 +133,17 @@ bool wvzBabyMaker::isPt10Electron(int idx)
     }
     else
     {
-        if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
+        if (fabs(cms3.els_etaSC()[idx]) < 0.8)
         {
-            if (!( getMVAoutput(idx)      > 0.6   )) return false;
+            if (!( cms3.els_VIDSpring16HZZMvaValue().at(idx) > -0.870 )) return false;
+        }
+        else if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
+        {
+            if (!( cms3.els_VIDSpring16HZZMvaValue().at(idx) > -0.838 )) return false;
         }
         else
         {
-            if (!( getMVAoutput(idx)      > 0.    )) return false;
+            if (!( cms3.els_VIDSpring16HZZMvaValue().at(idx) > -0.763 )) return false;
         }
     }
     if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;

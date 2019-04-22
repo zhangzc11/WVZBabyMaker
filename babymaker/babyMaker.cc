@@ -83,8 +83,9 @@ void babyMaker::ScanChain(bool verbose)
 
             // If data events and a failure is detected, we need to completely fail it.
             // We cannot lose any single data events.
-            if (coreSample.is2016Data(looper.getCurrentFileName()) || coreSample.is2017Data(looper.getCurrentFileName()))
+            if (coreSample.is2016Data(looper.getCurrentFileName()) || coreSample.is2017Data(looper.getCurrentFileName()) || coreSample.is2018Data(looper.getCurrentFileName()))
             {
+                std::cout << std::endl;
                 std::cout << "Found bad event in data" << std::endl;
                 FATALERROR(__FUNCTION__);
                 exit(2);
