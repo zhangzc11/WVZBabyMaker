@@ -14,7 +14,7 @@ def get_master_list():
 
     sample_info = {
 
-        "/DoubleEG/Run2016B-17Jul2018_ver1-v1/MINIAOD"   : "data_Run2016Bv1_ee" , 
+        #"/DoubleEG/Run2016B-17Jul2018_ver1-v1/MINIAOD"   : "data_Run2016Bv1_ee" , 
         "/DoubleEG/Run2016B-17Jul2018_ver2-v1/MINIAOD"   : "data_Run2016Bv2_ee" , 
         "/DoubleEG/Run2016C-17Jul2018-v1/MINIAOD"        : "data_Run2016C_ee"   , 
         "/DoubleEG/Run2016D-17Jul2018-v1/MINIAOD"        : "data_Run2016D_ee"   , 
@@ -22,7 +22,7 @@ def get_master_list():
         "/DoubleEG/Run2016F-17Jul2018-v1/MINIAOD"        : "data_Run2016F_ee"   , 
         "/DoubleEG/Run2016G-17Jul2018-v1/MINIAOD"        : "data_Run2016G_ee"   , 
         "/DoubleEG/Run2016H-17Jul2018-v1/MINIAOD"        : "data_Run2016H_ee"   , 
-        "/DoubleMuon/Run2016B-17Jul2018_ver1-v1/MINIAOD" : "data_Run2016Bv1_mm" , 
+        #"/DoubleMuon/Run2016B-17Jul2018_ver1-v1/MINIAOD" : "data_Run2016Bv1_mm" , 
         "/DoubleMuon/Run2016B-17Jul2018_ver2-v1/MINIAOD" : "data_Run2016Bv2_mm" , 
         "/DoubleMuon/Run2016C-17Jul2018-v1/MINIAOD"      : "data_Run2016C_mm"   , 
         "/DoubleMuon/Run2016D-17Jul2018-v1/MINIAOD"      : "data_Run2016D_mm"   , 
@@ -30,7 +30,7 @@ def get_master_list():
         "/DoubleMuon/Run2016F-17Jul2018-v1/MINIAOD"      : "data_Run2016F_mm"   , 
         "/DoubleMuon/Run2016G-17Jul2018-v1/MINIAOD"      : "data_Run2016G_mm"   , 
         "/DoubleMuon/Run2016H-17Jul2018-v1/MINIAOD"      : "data_Run2016H_mm"   , 
-        "/MuonEG/Run2016B-17Jul2018_ver1-v1/MINIAOD"     : "data_Run2016Bv1_em" , 
+        #"/MuonEG/Run2016B-17Jul2018_ver1-v1/MINIAOD"     : "data_Run2016Bv1_em" , 
         "/MuonEG/Run2016B-17Jul2018_ver2-v1/MINIAOD"     : "data_Run2016Bv2_em" , 
         "/MuonEG/Run2016C-17Jul2018-v1/MINIAOD"          : "data_Run2016C_em"   , 
         "/MuonEG/Run2016D-17Jul2018-v1/MINIAOD"          : "data_Run2016D_em"   , 
@@ -68,7 +68,7 @@ def get_master_list():
 
         # ZZ
         "/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUgenV6_pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM"                   : "ggh_hzz4l_powheg"           , 
-        "/ZZTo4L_13TeV_powheg_pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM"                                           : "zz_4l_powheg"               , 
+        "/ZZTo4L_13TeV_powheg_pythia8_ext1/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                                      : "zz_4l_powheg"               ,
         "/ZZTo2L2Nu_13TeV_powheg_pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                                        : "zz_2l2v_powheg"             , 
         "/ZZTo2L2Q_13TeV_powheg_pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                                         : "zz_2l2q_powheg"             , 
 
@@ -141,7 +141,7 @@ def get_master_list():
 
         # ZZ
         "/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v1/MINIAODSIM"                   : "ggh_hzz4l_powheg"           ,
-        "/ZZTo4L_13TeV_powheg_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                                   : "zz_4l_powheg"               ,
+        "/ZZTo4L_13TeV_powheg_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v1/MINIAODSIM"                                              : "zz_4l_powheg"               ,
         "/ZZTo2L2Nu_13TeV_powheg_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                                : "zz_2l2v_powheg"             ,
         "/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                   : "zz_2l2q_powheg"             ,
 
