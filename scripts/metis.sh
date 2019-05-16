@@ -96,7 +96,7 @@ if [[ ${INPUTFILENAMES} == *Run201* ]]; then
 fi
 
 # Run the job
-./processBaby ${INPUTFILENAMES} -1
+./processBaby ${INPUTFILENAMES} -1 ${INDEX} ${BABYMODE}
 
 # Check output status
 JOBSTATUS=$?

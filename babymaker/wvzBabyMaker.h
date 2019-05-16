@@ -9,9 +9,18 @@ class wvzBabyMaker: public babyMaker
         wvzBabyMaker();
         ~wvzBabyMaker();
 
+        enum BabyMode
+        {
+            kWVZ = 1,
+            kDilep = 2,
+        };
+
         RooUtil::Processor* processor;
         RooUtil::VarMap additional_elec_vars;
         RooUtil::VarMap additional_muon_vars;
+
+        BabyMode babyMode;
+        void SetBabyMode(BabyMode bm);
 
         virtual void SetLeptonID();
 

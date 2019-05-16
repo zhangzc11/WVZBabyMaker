@@ -35,7 +35,9 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
     # Extra arguments that will be passed on to ./processBaby to specific which baby to create from the babymaker binary executable
     args = ""
     if job_tag.find("WVZ") != -1:
-        args = "" # No argument necessary
+        args = "1"
+    if job_tag.find("Dilep") != -1:
+        args = "2"
 
     # Change directory to metis
     os.chdir(metis_path)

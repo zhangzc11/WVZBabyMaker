@@ -1,11 +1,17 @@
 #include "wvzBabyMaker.h"
 
 //##############################################################################################################
-wvzBabyMaker::wvzBabyMaker() : processor(0)
+wvzBabyMaker::wvzBabyMaker() : processor(0), babyMode(wvzBabyMaker::kWVZ)
 {
 }
 
 wvzBabyMaker::~wvzBabyMaker() {}
+
+//##############################################################################################################
+void wvzBabyMaker::SetBabyMode(wvzBabyMaker::BabyMode bm)
+{
+    babyMode = bm;
+}
 
 //##############################################################################################################
 void wvzBabyMaker::SetLeptonID()
@@ -91,9 +97,18 @@ void wvzBabyMaker::ProcessMuons()
 // Goal is to pass events with at least one fat jet and one lepton
 bool wvzBabyMaker::PassSelection()
 {
-    if (coreElectron.index.size() + coreMuon.index.size() < 4)
-        return false;
-    return true;
+    if (babyMode == kWVZ)
+    {
+        if (coreElectron.index.size() + coreMuon.index.size() < 4)
+            return false;
+        return true;
+    }
+    else if (babyMode == kDilep)
+    {
+        if (coreElectron.index.size() + coreMuon.index.size() < 2)
+            return false;
+        return true;
+    }
 }
 
 //##############################################################################################################
