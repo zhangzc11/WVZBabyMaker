@@ -14,6 +14,50 @@ void wvzBabyMaker::SetBabyMode(wvzBabyMaker::BabyMode bm)
 }
 
 //##############################################################################################################
+void wvzBabyMaker::PrintBabyMode()
+{
+    switch (babyMode)
+    {
+        case kWVZ:
+            std::cout << "Set to WVZ Baby Maker Mode" << std::endl;
+            break;
+        case kDilep:
+            std::cout << "Set to Dilep Baby Maker Mode" << std::endl;
+            break;
+    }
+}
+
+//##############################################################################################################
+bool wvzBabyMaker::PassEventList()
+{
+    switch (babyMode)
+    {
+        case kWVZ:
+            return true;
+            break;
+        case kDilep:
+            if (cms3.evt_isRealData())
+            {
+                if (looper.getNEventsProcessed() % 100 != 0)
+                    return false;
+                else
+                    return true;
+            }
+            else
+            {
+                if (float(looper.getNEventsProcessed()) / float(looper.getNEventsTotalInChain()) > 0.01)
+                    return false;
+                else
+                    return true;
+            }
+            break;
+        default:
+            return false;
+            break;
+    }
+}
+
+//##############################################################################################################
 void wvzBabyMaker::SetLeptonID()
 {
 
@@ -84,13 +128,29 @@ void wvzBabyMaker::ProcessObjectsPostPassSelection()
 //##############################################################################################################
 void wvzBabyMaker::ProcessElectrons()
 {
-    coreElectron.process(isPt10Electron);
+    switch (babyMode)
+    {
+        case kWVZ:
+            coreElectron.process(isPt10Electron);
+            break;
+        case kDilep:
+            coreElectron.process(isPt10POGVetoElectron);
+            break;
+    }
 }
 
 //##############################################################################################################
 void wvzBabyMaker::ProcessMuons()
 {
-    coreMuon.process(isPt10Muon);
+    switch (babyMode)
+    {
+        case kWVZ:
+            coreMuon.process(isPt10Muon);
+            break;
+        case kDilep:
+            coreMuon.process(isPt10POGVetoMuon);
+            break;
+    }
 }
 
 //##############################################################################################################
@@ -108,6 +168,10 @@ bool wvzBabyMaker::PassSelection()
         if (coreElectron.index.size() + coreMuon.index.size() < 2)
             return false;
         return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
@@ -190,6 +254,47 @@ bool wvzBabyMaker::isPt10Muon(int idx)
 }
 
 //##############################################################################################################
+// Very Loose Lepton ID
+bool wvzBabyMaker::isPt10POGVetoElectron(int idx)
+{
+    if (!( cms3.els_p4()[idx].pt() > 10.          )) return false;
+    if (!( isVetoElectronPOGfall17_v2(idx)        )) return false;
+    if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;
+    if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
+    {
+        if (!( fabs(cms3.els_dzPV()[idx]) < 0.1       )) return false;
+        if (!( fabs(cms3.els_dxyPV()[idx]) < 0.05     )) return false;
+    }
+    else
+    {
+        if (!( fabs(cms3.els_dzPV()[idx]) < 0.2       )) return false;
+        if (!( fabs(cms3.els_dxyPV()[idx]) < 0.1      )) return false;
+    }
+    return true;
+}
+
+//##############################################################################################################
+// Very Loose Lepton ID
+bool wvzBabyMaker::isPt10POGVetoMuon(int idx)
+{
+    if (!( cms3.mus_p4()[idx].pt() > 10.        )) return false;
+    if (!( isLooseMuonPOG(idx)                  )) return false;
+    if (!( fabs(cms3.mus_p4()[idx].eta()) < 2.4 )) return false;
+    if (!( muRelIso04DB(idx)  < 0.25            )) return false;
+    if (fabs(cms3.mus_p4()[idx].eta()) <= 1.479)
+    {
+        if (!( fabs(cms3.mus_dzPV()[idx]) < 0.1       )) return false;
+        if (!( fabs(cms3.mus_dxyPV()[idx]) < 0.05     )) return false;
+    }
+    else
+    {
+        if (!( fabs(cms3.mus_dzPV()[idx]) < 0.2       )) return false;
+        if (!( fabs(cms3.mus_dxyPV()[idx]) < 0.1      )) return false;
+    }
+    return true;
+}
+
+//##############################################################################################################
 bool wvzBabyMaker::isLeptonOverlappingWithJet(int ijet)
 {
     bool is_overlapping = false;
@@ -211,6 +316,41 @@ bool wvzBabyMaker::isLeptonOverlappingWithJet(int ijet)
     {
         const LV& p4 = cms3.mus_p4()[ilep];
         if (!( isPt10Muon(ilep) )) continue;
+        if (ROOT::Math::VectorUtil::DeltaR(jet_p4, p4) < 0.4)
+        {
+            is_overlapping = true;
+            break;
+        }
+    }
+
+    if (is_overlapping)
+        return true;
+
+    return false;
+}
+
+//##############################################################################################################
+bool wvzBabyMaker::isPOGLeptonOverlappingWithJet(int ijet)
+{
+    bool is_overlapping = false;
+    int idx = coreJet.index[ijet];
+    const LV& jet_p4 = cms3.pfjets_p4()[idx];
+
+    for (unsigned ilep = 0; ilep < cms3.els_p4().size(); ++ilep)
+    {
+        const LV& p4 = cms3.els_p4()[ilep];
+        if (!( isPt10POGVetoElectron(ilep) )) continue;
+        if (ROOT::Math::VectorUtil::DeltaR(jet_p4, p4) < 0.4)
+        {
+            is_overlapping = true;
+            break;
+        }
+    }
+
+    for (unsigned ilep = 0; ilep < cms3.mus_p4().size(); ++ilep)
+    {
+        const LV& p4 = cms3.mus_p4()[ilep];
+        if (!( isPt10POGVetoMuon(ilep) )) continue;
         if (ROOT::Math::VectorUtil::DeltaR(jet_p4, p4) < 0.4)
         {
             is_overlapping = true;

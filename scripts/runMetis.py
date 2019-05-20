@@ -118,6 +118,7 @@ def get_master_list():
         "/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                            : "wzz_amcatnlo"               ,
         "/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                            : "zzz_amcatnlo"               ,
         "/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                             : "vh_nonbb_amcatnlo"          ,
+        "/WWZJetsTo4L2Nu_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                          : "wwz_4l2v_amcatnlo"          ,
 
         # DY+Jets
         "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                         : "dy_m1050_madgraph"          ,
@@ -177,7 +178,8 @@ def get_master_list():
         # "/EGamma/Run2018C-PromptReco-v1/MINIAOD"     : "data_Run2018Cv1_ee",
         # "/EGamma/Run2018C-PromptReco-v2/MINIAOD"     : "data_Run2018Cv2_ee",
         # "/EGamma/Run2018C-PromptReco-v3/MINIAOD"     : "data_Run2018Cv3_ee",
-        "/EGamma/Run2018D-PromptReco-v2/MINIAOD"       : "data_Run2018Dv2_ee",
+        #"/EGamma/Run2018D-PromptReco-v2/MINIAOD"       : "data_Run2018Dv2_ee",
+        "/EGamma/Run2018D-22Jan2019-v2/MINIAOD"        : "data_Run2018Dv2_ee",
         # "/DoubleMuon/Run2018A-PromptReco-v1/MINIAOD" : "data_Run2018Av1_mm",
         # "/DoubleMuon/Run2018A-PromptReco-v2/MINIAOD" : "data_Run2018Av2_mm",
         # "/DoubleMuon/Run2018A-PromptReco-v3/MINIAOD" : "data_Run2018Av3_mm",
@@ -216,6 +218,7 @@ def get_master_list():
         "/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "wzz_amcatnlo"               ,
         "/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "zzz_amcatnlo"               ,
         "/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                        : "vh_nonbb_amcatnlo"          ,
+        "/WWZJetsTo4L2Nu_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                     : "wwz_4l2v_amcatnlo"          ,
 
         # Z + Jets/Gamma
         "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                    : "dy_m1050_madgraph"          ,
@@ -314,6 +317,8 @@ if __name__ == "__main__":
         master_list["wvz_2017_94x"] = grand_master_list["wvz_2017_94x"]
     if "WVZ2016" in args.sample_sets:
         master_list["wvz_2016_94x"] = grand_master_list["wvz_2016_94x"]
+    if "Dilep2018" in args.sample_sets:
+        master_list["dilep_2018_102x"] = grand_master_list["dilep_2018_102x"]
 
     submit(master_list, args.tag, dotestrun=args.test)
 

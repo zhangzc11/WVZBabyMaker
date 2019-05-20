@@ -21,6 +21,9 @@ class wvzBabyMaker: public babyMaker
 
         BabyMode babyMode;
         void SetBabyMode(BabyMode bm);
+        void PrintBabyMode();
+
+        virtual bool PassEventList();
 
         virtual void SetLeptonID();
 
@@ -36,6 +39,10 @@ class wvzBabyMaker: public babyMaker
         static bool isPt10Electron(int idx);
         static bool isPt10Muon(int idx);
         bool isLeptonOverlappingWithJet(int ijet);
+
+        static bool isPt10POGVetoElectron(int idx);
+        static bool isPt10POGVetoMuon(int idx);
+        bool isPOGLeptonOverlappingWithJet(int ijet);
 
 };
 

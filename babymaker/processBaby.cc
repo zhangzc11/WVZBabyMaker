@@ -50,6 +50,7 @@ int main(int argc, char **argv)
         case 1: looper->SetBabyMode(wvzBabyMaker::kWVZ); break;
         case 2: looper->SetBabyMode(wvzBabyMaker::kDilep); break;
     }
+    looper->PrintBabyMode();
     looper->ProcessCMS4(infile, max_events, index, verbose);
     delete looper;
     return 0;

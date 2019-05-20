@@ -84,7 +84,7 @@ echo ">>> export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/fastjet/fastjet-install/l
 export LD_LIBRARY_PATH=$PWD/fastjet/fastjet-install/lib:$LD_LIBRARY_PATH
 echo ">>> export COREDIR=$PWD/CORE/"
 export COREDIR=$PWD/CORE/
-echo ">>> ./processBaby ${INPUTFILENAMES} -1"
+echo ">>> ./processBaby ${INPUTFILENAMES} -1 ${INDEX} ${BABYMODE}"
 
 # Output job index
 INDEX=1

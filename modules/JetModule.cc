@@ -15,10 +15,17 @@ void wvzModule::JetModule::AddOutput()
     tx->createBranch<vector<float>>("jets_phi");
     tx->createBranch<vector<float>>("jets_mass");
 
+    tx->createBranch<vector<LV>>("jets_cen_p4");
+    tx->createBranch<vector<float>>("jets_cen_pt");
+    tx->createBranch<vector<float>>("jets_cen_eta");
+    tx->createBranch<vector<float>>("jets_cen_phi");
+    tx->createBranch<vector<float>>("jets_cen_mass");
+
     tx->createBranch<int>("nj");
     tx->createBranch<int>("nb");
     tx->createBranch<int>("nbmed");
     tx->createBranch<float>("ht");
+    tx->createBranch<int>("nj_cen");
 
     tx->createBranch<float>("weight_btagsf");
     tx->createBranch<float>("weight_btagsf_heavy_DN");
@@ -33,6 +40,7 @@ void wvzModule::JetModule::FillOutput()
 
     // Variables to compute and fill to the ttree output
     int nj = 0;
+    int nj_cen = 0;
     int nb = 0;
     int nbmed = 0;
     float ht = 0;
@@ -99,8 +107,15 @@ void wvzModule::JetModule::FillOutput()
         LV jet = cms3.pfjets_p4()[idx] * cms3.pfjets_undoJEC()[idx] * corr;
 
         // Check whether this jet overlaps with any of the leptons
-        if (babymaker->isLeptonOverlappingWithJet(ijet))
-            continue;
+        switch (babymaker->babyMode)
+        {
+            case wvzBabyMaker::kWVZ:
+                if (babymaker->isLeptonOverlappingWithJet(ijet)) continue;
+                break;
+            case wvzBabyMaker::kDilep:
+                if (babymaker->isPOGLeptonOverlappingWithJet(ijet)) continue;
+                break;
+        }
 
         // The pt of the jet
         float pt = jet.pt();
@@ -112,6 +127,9 @@ void wvzModule::JetModule::FillOutput()
             // Increase the counter for the number of jets
             nj++;
             ht += pt;
+
+            if (fabs(jet.eta()) < 2.4)
+                nj_cen++;
 
         }
 
@@ -149,6 +167,16 @@ void wvzModule::JetModule::FillOutput()
             tx->pushbackToBranch<float>("jets_mass", jet.mass());
         }
 
+        // Adding jets to the container
+        if (jet.pt() > 20.)
+        {
+            tx->pushbackToBranch<LV>("jets_cen_p4", jet);
+            tx->pushbackToBranch<float>("jets_cen_pt", jet.pt());
+            tx->pushbackToBranch<float>("jets_cen_eta", jet.eta());
+            tx->pushbackToBranch<float>("jets_cen_phi", jet.phi());
+            tx->pushbackToBranch<float>("jets_cen_mass", jet.mass());
+        }
+
 
     } // End looping over jets
 
@@ -156,11 +184,28 @@ void wvzModule::JetModule::FillOutput()
     tx->setBranch<int>("nb", nb);
     tx->setBranch<int>("nbmed", nbmed);
     tx->setBranch<float>("ht", ht);
+    tx->setBranch<int>("nj_cen", nj_cen);
 
     tx->setBranch<float>("weight_btagsf"         , babymaker->coreBtagSF.btagprob_data     / babymaker->coreBtagSF.btagprob_mc);
     tx->setBranch<float>("weight_btagsf_heavy_DN", babymaker->coreBtagSF.btagprob_heavy_DN / babymaker->coreBtagSF.btagprob_mc);
     tx->setBranch<float>("weight_btagsf_heavy_UP", babymaker->coreBtagSF.btagprob_heavy_UP / babymaker->coreBtagSF.btagprob_mc);
     tx->setBranch<float>("weight_btagsf_light_DN", babymaker->coreBtagSF.btagprob_light_DN / babymaker->coreBtagSF.btagprob_mc);
     tx->setBranch<float>("weight_btagsf_light_UP", babymaker->coreBtagSF.btagprob_light_UP / babymaker->coreBtagSF.btagprob_mc);
+
+    tx->sortVecBranchesByPt("jets_p4",
+            {
+            "jets_pt",
+            "jets_eta",
+            "jets_phi",
+            "jets_mass"
+            },{},{});
+
+    tx->sortVecBranchesByPt("jets_cen_p4",
+            {
+            "jets_cen_pt",
+            "jets_cen_eta",
+            "jets_cen_phi",
+            "jets_cen_mass"
+            },{},{});
 
 }

@@ -55,7 +55,8 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
         # define the task
         maker_task = CondorTask(
                 sample               = SNTSample(dataset=sample,
-                                                 exclude_tag_pattern="CMS4_V08-*", # ignore new samples by sicheng for 2016 
+                                                 # exclude_tag_pattern="CMS4_V08-*", # ignore new samples by sicheng for 2016 
+                                                 exclude_tag_pattern="*v516*", # ignore new samples by sicheng for 2016 
                                                  ),
                 tag                  = job_tag,
                 arguments            = args,
@@ -63,7 +64,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
                 tarfile              = tar_gz_path,
                 special_dir          = hadoop_path,
                 output_name          = "output.root",
-                files_per_output     = 10,
+                files_per_output     = 1 if "_Run201" in sample else 10,
                 condor_submit_params = {"sites" : "T2_US_UCSD"},
                 open_dataset         = False,
                 flush                = True,
@@ -121,7 +122,7 @@ def create_tar_ball(year, baby_type, baby_version_tag):
     os.chdir(main_dir)
     exists = os.path.isfile(tar_gz_path)
     if not exists:
-        os.system("tar -chzf {} ../setup.sh ../processBaby ../coreutil/data ../CORE/Tools/ ../rooutil/*.sh ../rooutil/hadd.py ../rooutil/addHistos.sh".format(tar_gz_path))
+        os.system("tar -chzf {} ../setup.sh ../processBaby ../coreutil/data ../CORE/Tools/ ../rooutil/*.sh ../rooutil/hadd.py ../rooutil/addHistos.sh ../scale1fbs.txt".format(tar_gz_path))
 
 #______________________________________________________________________________________
 def submit(dinfos, version_tag, dotestrun=False):
