@@ -76,6 +76,9 @@ else
 fi
 ###################################################################################################
 
+# Output job index
+INDEX=1
+
 echo ">>> source setup.sh"
 source setup.sh
 echo ">>> ls -l"
@@ -85,9 +88,6 @@ export LD_LIBRARY_PATH=$PWD/fastjet/fastjet-install/lib:$LD_LIBRARY_PATH
 echo ">>> export COREDIR=$PWD/CORE/"
 export COREDIR=$PWD/CORE/
 echo ">>> ./processBaby ${INPUTFILENAMES} -1 ${INDEX} ${BABYMODE}"
-
-# Output job index
-INDEX=1
 
 # Check is data?
 ISDATA=false

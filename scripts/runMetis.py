@@ -265,6 +265,72 @@ def get_master_list():
             "baby_type" : "WVZ"
             }
 
+    sample_info = {
+
+        "/EGamma/Run2018D-22Jan2019-v2/MINIAOD"        : "data_Run2018Dv2_ee",
+        "/DoubleMuon/Run2018D-PromptReco-v2/MINIAOD"   : "data_Run2018Dv2_mm",
+        "/MuonEG/Run2018D-PromptReco-v2/MINIAOD"       : "data_Run2018Dv2_em",
+
+        # Rereco
+        "/EGamma/Run2018A-17Sep2018-v2/MINIAOD"     : "data_Run2018Av2_ee",
+        "/EGamma/Run2018B-17Sep2018-v1/MINIAOD"     : "data_Run2018Bv1_ee",
+        "/EGamma/Run2018C-17Sep2018-v1/MINIAOD"     : "data_Run2018Cv1_ee",
+
+        "/DoubleMuon/Run2018A-17Sep2018-v2/MINIAOD" : "data_Run2018Av2_mm",
+        "/DoubleMuon/Run2018B-17Sep2018-v1/MINIAOD" : "data_Run2018Bv1_mm",
+        "/DoubleMuon/Run2018C-17Sep2018-v1/MINIAOD" : "data_Run2018Cv1_mm",
+
+        "/MuonEG/Run2018A-17Sep2018-v1/MINIAOD"     : "data_Run2018Av1_em",
+        "/MuonEG/Run2018B-17Sep2018-v1/MINIAOD"     : "data_Run2018Bv1_em",
+        "/MuonEG/Run2018C-17Sep2018-v1/MINIAOD"     : "data_Run2018Cv1_em",
+
+        # Tribosons
+        "/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                               : "www_amcatnlo"               ,
+        "/WWZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "wwz_amcatnlo"               ,
+        "/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "wzz_amcatnlo"               ,
+        "/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "zzz_amcatnlo"               ,
+        "/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                        : "vh_nonbb_amcatnlo"          ,
+        "/WWZJetsTo4L2Nu_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                     : "wwz_4l2v_amcatnlo"          ,
+
+        # Z + Jets/Gamma
+        "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                    : "dy_m1050_madgraph"          ,
+        "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                        : "dy_m50_madgraph"            ,
+        "/ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                   : "zg_llg_amcatnlo"            ,
+
+        # W + Jets
+        "/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                             : "wjets_incl_madgraph"        ,
+
+        # Top(/ttbar) + X
+        "/ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-madgraph-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v4/MINIAODSIM"         : "sts_4f_leptonic_madgraph"   ,
+        "/ST_tWll_5f_LO_TuneCP5_PSweights_13TeV-madgraph-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v1/MINIAODSIM"              : "twz_ll_madgraph"            ,
+        "/ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v3/MINIAODSIM" : "tw_antitopnofullhad_powheg" ,
+        "/ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v3/MINIAODSIM"     : "tw_topnofullhad_powheg"     ,
+        "/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                          : "ttbar_dilep_madgraph"       ,
+        "/TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"             : "ttw_lnu_amcatnlo"           ,
+        "/TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                           : "ttz_ll_mll1_amcatnlo"       ,
+        "/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                     : "ttz_llvv_mll10_amcatnlo"    ,
+        "/tZq_ll_4f_ckm_NLO_TuneCP5_13TeV-madgraph-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                    : "tZq_ll_madgraph"            ,
+        "/ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                             : "tth_nonbb_powheg"           ,
+
+        # ZZ
+        "/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                   : "ggh_hzz4l_powheg"           ,
+        "/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext2-v2/MINIAODSIM"                                 : "zz_4l_powheg"               ,
+        "/ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                              : "zz_2l2v_powheg"             ,
+        "/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                              : "zz_2l2q_powheg"             ,
+
+        # WW
+        "/WWTo2L2Nu_NNPDF31_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                           : "ww_2l_powheg"               ,
+
+        # WZ
+        "/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                         : "wz_3lv_amcatnlo"            ,
+
+        # Dibonson + Gamma
+        # Missing ZZ Gamma
+        "/WZG_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                                       : "wzg_amcatnlo"               ,
+        "/WWG_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "wwg_amcatnlo"               ,
+
+        }
+
     dinfos["dilep_2018_102x"] = {
             "samples" : sample_info,
             "year" : 2018,

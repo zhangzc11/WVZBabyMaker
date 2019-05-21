@@ -131,7 +131,8 @@ void wvzBabyMaker::ProcessElectrons()
     switch (babyMode)
     {
         case kWVZ:
-            coreElectron.process(isPt10Electron);
+            // coreElectron.process(isPt10Electron);
+            coreElectron.process(isPt10POGVetoElectron);
             break;
         case kDilep:
             coreElectron.process(isPt10POGVetoElectron);
@@ -145,7 +146,8 @@ void wvzBabyMaker::ProcessMuons()
     switch (babyMode)
     {
         case kWVZ:
-            coreMuon.process(isPt10Muon);
+            // coreMuon.process(isPt10Muon);
+            coreMuon.process(isPt10POGVetoMuon);
             break;
         case kDilep:
             coreMuon.process(isPt10POGVetoMuon);
@@ -160,6 +162,19 @@ bool wvzBabyMaker::PassSelection()
     if (babyMode == kWVZ)
     {
         if (coreElectron.index.size() + coreMuon.index.size() < 4)
+            return false;
+        int nLepPt25 = 0;
+        for (auto& iel : coreElectron.index)
+        {
+            if (cms3.els_p4()[iel].pt() > 25.)
+                nLepPt25++;
+        }
+        for (auto& imu : coreMuon.index)
+        {
+            if (cms3.mus_p4()[imu].pt() > 25.)
+                nLepPt25++;
+        }
+        if (nLepPt25 < 2)
             return false;
         return true;
     }

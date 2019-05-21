@@ -110,7 +110,8 @@ void wvzModule::JetModule::FillOutput()
         switch (babymaker->babyMode)
         {
             case wvzBabyMaker::kWVZ:
-                if (babymaker->isLeptonOverlappingWithJet(ijet)) continue;
+                // if (babymaker->isLeptonOverlappingWithJet(ijet)) continue;
+                if (babymaker->isPOGLeptonOverlappingWithJet(ijet)) continue;
                 break;
             case wvzBabyMaker::kDilep:
                 if (babymaker->isPOGLeptonOverlappingWithJet(ijet)) continue;
