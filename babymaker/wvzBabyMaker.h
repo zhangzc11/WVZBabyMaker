@@ -13,6 +13,7 @@ class wvzBabyMaker: public babyMaker
         {
             kWVZ = 1,
             kDilep = 2,
+            kTrilep = 3,
         };
 
         RooUtil::Processor* processor;

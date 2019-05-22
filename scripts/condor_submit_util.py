@@ -38,6 +38,8 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
         args = "1"
     if job_tag.find("Dilep") != -1:
         args = "2"
+    if job_tag.find("Trilep") != -1:
+        args = "3"
 
     # Change directory to metis
     os.chdir(metis_path)
@@ -64,9 +66,9 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
                 tarfile              = tar_gz_path,
                 special_dir          = hadoop_path,
                 output_name          = "output.root",
-                files_per_output     = 6 if "_Run201" in sample else 1,
+                files_per_output     = 6 if "Run201" in sample else 1,
                 # files_per_output     = 1,
-                condor_submit_params = {"sites" : "T2_US_UCSD"},
+                condor_submit_params = {"sites" : "T2_US_UCSD,UAF"},
                 open_dataset         = False,
                 flush                = True,
                 max_jobs             = 5 if dotestrun else 0

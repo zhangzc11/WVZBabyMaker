@@ -49,6 +49,7 @@ int main(int argc, char **argv)
     {
         case 1: looper->SetBabyMode(wvzBabyMaker::kWVZ); break;
         case 2: looper->SetBabyMode(wvzBabyMaker::kDilep); break;
+        case 3: looper->SetBabyMode(wvzBabyMaker::kTrilep); break;
     }
     looper->PrintBabyMode();
     looper->ProcessCMS4(infile, max_events, index, verbose);

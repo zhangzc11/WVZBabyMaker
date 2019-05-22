@@ -21,6 +21,9 @@ void wvzBabyMaker::PrintBabyMode()
         case kWVZ:
             std::cout << "Set to WVZ Baby Maker Mode" << std::endl;
             break;
+        case kTrilep:
+            std::cout << "Set to Trilep Baby Maker Mode" << std::endl;
+            break;
         case kDilep:
             std::cout << "Set to Dilep Baby Maker Mode" << std::endl;
             break;
@@ -35,21 +38,25 @@ bool wvzBabyMaker::PassEventList()
         case kWVZ:
             return true;
             break;
+        case kTrilep:
+            return true;
+            break;
         case kDilep:
-            if (cms3.evt_isRealData())
-            {
-                if (looper.getNEventsProcessed() % 100 != 0)
-                    return false;
-                else
-                    return true;
-            }
-            else
-            {
-                if (float(looper.getNEventsProcessed()) / float(looper.getNEventsTotalInChain()) > 0.01)
-                    return false;
-                else
-                    return true;
-            }
+            return true;
+            // if (cms3.evt_isRealData())
+            // {
+            //     if (looper.getNEventsProcessed() % 100 != 0)
+            //         return false;
+            //     else
+            //         return true;
+            // }
+            // else
+            // {
+            //     if (float(looper.getNEventsProcessed()) / float(looper.getNEventsTotalInChain()) > 0.01)
+            //         return false;
+            //     else
+            //         return true;
+            // }
             break;
         default:
             return false;
@@ -131,7 +138,9 @@ void wvzBabyMaker::ProcessElectrons()
     switch (babyMode)
     {
         case kWVZ:
-            // coreElectron.process(isPt10Electron);
+            coreElectron.process(isPt10POGVetoElectron);
+            break;
+        case kTrilep:
             coreElectron.process(isPt10POGVetoElectron);
             break;
         case kDilep:
@@ -146,7 +155,9 @@ void wvzBabyMaker::ProcessMuons()
     switch (babyMode)
     {
         case kWVZ:
-            // coreMuon.process(isPt10Muon);
+            coreMuon.process(isPt10POGVetoMuon);
+            break;
+        case kTrilep:
             coreMuon.process(isPt10POGVetoMuon);
             break;
         case kDilep:
@@ -178,9 +189,46 @@ bool wvzBabyMaker::PassSelection()
             return false;
         return true;
     }
+    else if (babyMode == kTrilep)
+    {
+        if (coreElectron.index.size() + coreMuon.index.size() < 3)
+            return false;
+        int nLepPt25 = 0;
+        for (auto& iel : coreElectron.index)
+        {
+            if (cms3.els_p4()[iel].pt() > 25.)
+                nLepPt25++;
+        }
+        for (auto& imu : coreMuon.index)
+        {
+            if (cms3.mus_p4()[imu].pt() > 25.)
+                nLepPt25++;
+        }
+        if (nLepPt25 < 2)
+            return false;
+        return true;
+    }
     else if (babyMode == kDilep)
     {
         if (coreElectron.index.size() + coreMuon.index.size() < 2)
+            return false;
+        int nLepPt25 = 0;
+        int nLepPt15 = 0;
+        for (auto& iel : coreElectron.index)
+        {
+            if (cms3.els_p4()[iel].pt() > 25.)
+                nLepPt25++;
+            if (cms3.els_p4()[iel].pt() > 15.)
+                nLepPt15++;
+        }
+        for (auto& imu : coreMuon.index)
+        {
+            if (cms3.mus_p4()[imu].pt() > 25.)
+                nLepPt25++;
+            if (cms3.mus_p4()[imu].pt() > 15.)
+                nLepPt15++;
+        }
+        if (not (nLepPt25 >= 1 and nLepPt15 >= 1))
             return false;
         return true;
     }
