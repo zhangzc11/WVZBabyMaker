@@ -92,7 +92,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
                     # open_dataset         = True, flush = True,
                     executable             = merge_exec_path,
                     tarfile                = tar_gz_path,
-                    files_per_output       = 100000,
+                    files_per_output       = 1,
                     output_dir             = maker_task.get_outputdir() + "/merged",
                     output_name            = samples_dictionary[sample] + ".root",
                     condor_submit_params   = {"sites":"UAF"},
@@ -102,6 +102,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
                     cmssw_version          = "CMSSW_9_2_0",
                     scram_arch             = "slc6_amd64_gcc530",
                     #no_load_from_backup    = True,
+                    max_jobs               = 1,
                     )
             merge_task.reset_io_mapping()
             merge_task.update_mapping()
