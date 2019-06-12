@@ -58,6 +58,8 @@ bool wvzBabyMaker::PassEventList()
             //         return true;
             // }
             break;
+        case kWVZMVA:
+            return true;
         default:
             return false;
             break;
@@ -146,6 +148,9 @@ void wvzBabyMaker::ProcessElectrons()
         case kDilep:
             coreElectron.process(isPt10POGVetoElectron);
             break;
+        case kWVZMVA:
+            coreElectron.process(isPt10POGMVAwpLooseElectron);
+            break;
     }
 }
 
@@ -161,6 +166,9 @@ void wvzBabyMaker::ProcessMuons()
             coreMuon.process(isPt10POGVetoMuon);
             break;
         case kDilep:
+            coreMuon.process(isPt10POGVetoMuon);
+            break;
+        case kWVZMVA:
             coreMuon.process(isPt10POGVetoMuon);
             break;
     }
@@ -229,6 +237,32 @@ bool wvzBabyMaker::PassSelection()
                 nLepPt15++;
         }
         if (not (nLepPt25 >= 1 and nLepPt15 >= 1))
+            return false;
+        return true;
+    }
+    else if (babyMode == kWVZMVA)
+    {
+        if (coreElectron.index.size() + coreMuon.index.size() < 4)
+            return false;
+        int nLepPt25 = 0;
+        int nLepPt20 = 0;
+        for (auto& iel : coreElectron.index)
+        {
+            if (cms3.els_p4()[iel].pt() > 25.)
+                nLepPt25++;
+            if (cms3.els_p4()[iel].pt() > 20.)
+                nLepPt20++;
+        }
+        for (auto& imu : coreMuon.index)
+        {
+            if (cms3.mus_p4()[imu].pt() > 25.)
+                nLepPt25++;
+            if (cms3.mus_p4()[imu].pt() > 20.)
+                nLepPt20++;
+        }
+        if (nLepPt25 < 1)
+            return false;
+        if (nLepPt20 < 2)
             return false;
         return true;
     }
@@ -322,6 +356,46 @@ bool wvzBabyMaker::isPt10POGVetoElectron(int idx)
 {
     if (!( cms3.els_p4()[idx].pt() > 10.          )) return false;
     if (!( isVetoElectronPOGfall17_v2(idx)        )) return false;
+    if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;
+    if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
+    {
+        if (!( fabs(cms3.els_dzPV()[idx]) < 0.1       )) return false;
+        if (!( fabs(cms3.els_dxyPV()[idx]) < 0.05     )) return false;
+    }
+    else
+    {
+        if (!( fabs(cms3.els_dzPV()[idx]) < 0.2       )) return false;
+        if (!( fabs(cms3.els_dxyPV()[idx]) < 0.1      )) return false;
+    }
+    return true;
+}
+
+//##############################################################################################################
+// Very Loose Lepton ID
+bool wvzBabyMaker::isPt10POGMVAwpLooseElectron(int idx)
+{
+    if (!( cms3.els_p4()[idx].pt() > 10.          )) return false;
+    if (!( isMVAwpLooseIsofall17V2(idx)           )) return false;
+    if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;
+    if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
+    {
+        if (!( fabs(cms3.els_dzPV()[idx]) < 0.1       )) return false;
+        if (!( fabs(cms3.els_dxyPV()[idx]) < 0.05     )) return false;
+    }
+    else
+    {
+        if (!( fabs(cms3.els_dzPV()[idx]) < 0.2       )) return false;
+        if (!( fabs(cms3.els_dxyPV()[idx]) < 0.1      )) return false;
+    }
+    return true;
+}
+
+//##############################################################################################################
+// Slightly Loose Lepton ID
+bool wvzBabyMaker::isPt10POGMVAwpHZZElectron(int idx)
+{
+    if (!( cms3.els_p4()[idx].pt() > 10.          )) return false;
+    if (!( isMVAHZZIsofall17V2(idx)         )) return false;
     if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;
     if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
     {

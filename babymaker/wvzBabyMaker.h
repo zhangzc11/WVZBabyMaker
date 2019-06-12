@@ -14,6 +14,7 @@ class wvzBabyMaker: public babyMaker
             kWVZ = 1,
             kDilep = 2,
             kTrilep = 3,
+            kWVZMVA = 4,
         };
 
         RooUtil::Processor* processor;
@@ -41,6 +42,8 @@ class wvzBabyMaker: public babyMaker
         static bool isPt10Muon(int idx);
         bool isLeptonOverlappingWithJet(int ijet);
 
+        static bool isPt10POGMVAwpLooseElectron(int idx);
+        static bool isPt10POGMVAwpHZZElectron(int idx);
         static bool isPt10POGVetoElectron(int idx);
         static bool isPt10POGVetoMuon(int idx);
         bool isPOGLeptonOverlappingWithJet(int ijet);

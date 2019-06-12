@@ -16,6 +16,7 @@ void wvzModule::LeptonModule::AddOutput()
     tx->createBranch<vector<float>>("lep_phi");
     tx->createBranch<vector<float>>("lep_energy");
     tx->createBranch<vector<float>>("lep_mva");
+    tx->createBranch<vector<float>>("lep_mvaIso");
     tx->createBranch<vector<float>>("lep_relIso04DB");
     tx->createBranch<vector<float>>("lep_relIso03EA");
     tx->createBranch<vector<float>>("lep_relIso03EAwLep");
@@ -29,6 +30,13 @@ void wvzModule::LeptonModule::AddOutput()
     tx->createBranch<vector<int>>("lep_id");
     tx->createBranch<vector<int>>("lep_isTightPOG");
     tx->createBranch<vector<int>>("lep_isMediumPOG");
+    tx->createBranch<vector<int>>("lep_isMVAwp80NoIsoPOG");
+    tx->createBranch<vector<int>>("lep_isMVAwp90NoIsoPOG");
+    tx->createBranch<vector<int>>("lep_isMVAwpLooseNoIsoPOG");
+    tx->createBranch<vector<int>>("lep_isMVAwp80IsoPOG");
+    tx->createBranch<vector<int>>("lep_isMVAwp90IsoPOG");
+    tx->createBranch<vector<int>>("lep_isMVAwpLooseIsoPOG");
+    tx->createBranch<vector<int>>("lep_isMVAwpHZZIsoPOG");
     tx->createBranch<vector<int>>("lep_isCutBasedNoIsoVetoPOG");
     tx->createBranch<vector<int>>("lep_isCutBasedNoIsoLoosePOG");
     tx->createBranch<vector<int>>("lep_isCutBasedNoIsoMediumPOG");
@@ -37,7 +45,6 @@ void wvzModule::LeptonModule::AddOutput()
     tx->createBranch<vector<int>>("lep_isCutBasedIsoLoosePOG");
     tx->createBranch<vector<int>>("lep_isCutBasedIsoMediumPOG");
     tx->createBranch<vector<int>>("lep_isCutBasedIsoTightPOG");
-    // tx->createBranch<vector<float>>("lep_mvaTTH");
 
 }
 
@@ -53,10 +60,8 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<float>("lep_eta", cms3.els_p4()[idx].eta());
         tx->pushbackToBranch<float>("lep_phi", cms3.els_p4()[idx].phi());
         tx->pushbackToBranch<float>("lep_energy", cms3.els_p4()[idx].energy());
-        if (gconf.year == 2016)
-            tx->pushbackToBranch<float>("lep_mva", cms3.els_VIDSpring16HZZMvaValue().at(idx));
-        if (gconf.year == 2017 or gconf.year == 2018)
-            tx->pushbackToBranch<float>("lep_mva", getMVAoutput(idx, true));
+        tx->pushbackToBranch<float>("lep_mva", cms3.els_VIDFall17V2NoIsoMvaValue().at(idx));
+        tx->pushbackToBranch<float>("lep_mvaIso", cms3.els_VIDFall17V2IsoMvaValue().at(idx));
         tx->pushbackToBranch<float>("lep_relIso04DB", -999);
         tx->pushbackToBranch<float>("lep_relIso03EA", eleRelIso03EA(idx, gconf.ea_version, false));
         tx->pushbackToBranch<float>("lep_relIso03EAwLep", eleRelIso03EA(idx, gconf.ea_version, true));
@@ -84,8 +89,15 @@ void wvzModule::LeptonModule::FillOutput()
         }
         tx->pushbackToBranch<int>("lep_idx", idx);
         tx->pushbackToBranch<int>("lep_id", cms3.els_charge()[idx]*(-11));
-        tx->pushbackToBranch<int>("lep_isTightPOG", gconf.year == 2016 ? getMVAoutput(idx) : isMVAwp80NoIsofall17(idx, true));
-        tx->pushbackToBranch<int>("lep_isMediumPOG", gconf.year == 2016 ? getMVAoutput(idx) : isMVAwp90NoIsofall17(idx, true));
+        tx->pushbackToBranch<int>("lep_isTightPOG", isMVAwp80NoIsofall17V2(idx, true));
+        tx->pushbackToBranch<int>("lep_isMediumPOG", isMVAwp90NoIsofall17V2(idx, true));
+        tx->pushbackToBranch<int>("lep_isMVAwp80NoIsoPOG"    , isMVAwp80NoIsofall17V2(idx));
+        tx->pushbackToBranch<int>("lep_isMVAwp90NoIsoPOG"    , isMVAwp90NoIsofall17V2(idx));
+        tx->pushbackToBranch<int>("lep_isMVAwpLooseNoIsoPOG" , isMVAwpLooseNoIsofall17V2(idx));
+        tx->pushbackToBranch<int>("lep_isMVAwp80IsoPOG"      , isMVAwp80Isofall17V2(idx));
+        tx->pushbackToBranch<int>("lep_isMVAwp90IsoPOG"      , isMVAwp90Isofall17V2(idx));
+        tx->pushbackToBranch<int>("lep_isMVAwpLooseIsoPOG"   , isMVAwpLooseIsofall17V2(idx));
+        tx->pushbackToBranch<int>("lep_isMVAwpHZZIsoPOG"     , isMVAHZZIsofall17V2(idx));
         tx->pushbackToBranch<int>("lep_isCutBasedNoIsoVetoPOG"  , isVetoElectronPOGfall17noIso_v2(idx) );
         tx->pushbackToBranch<int>("lep_isCutBasedNoIsoLoosePOG" , isLooseElectronPOGfall17noIso_v2(idx) );
         tx->pushbackToBranch<int>("lep_isCutBasedNoIsoMediumPOG", isMediumElectronPOGfall17noIso_v2(idx) );
@@ -95,15 +107,6 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<int>("lep_isCutBasedIsoMediumPOG"  , isMediumElectronPOGfall17_v2(idx) );
         tx->pushbackToBranch<int>("lep_isCutBasedIsoTightPOG"   , isTightElectronPOGfall17_v2(idx) );
 
-        // Getting TTH MVA variable from txt files generated from nanoAOD
-        // std::vector<float> additional_vars = babymaker->additional_elec_vars.get({(int) cms3.evt_event(), (int) cms3.evt_lumiBlock(), (int) cms3.evt_run()});
-        // float val_closest_mva = -999;
-        // for (unsigned ii = 0; ii < additional_vars.size() - 1; ii += 2)
-        // {
-        //     if (fabs(additional_vars[ii+1] - cms3.els_p4()[idx].pt()) < 0.01)
-        //         val_closest_mva = additional_vars[ii];
-        // }
-        // tx->pushbackToBranch<float>("lep_mvaTTH", val_closest_mva);
     }
 
     // I expect either one electron or one muon so it's ok to loop over
@@ -115,6 +118,7 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<float>("lep_phi", cms3.mus_p4()[idx].phi());
         tx->pushbackToBranch<float>("lep_energy", cms3.mus_p4()[idx].energy());
         tx->pushbackToBranch<float>("lep_mva", 999);
+        tx->pushbackToBranch<float>("lep_mvaIso", 999);
         tx->pushbackToBranch<float>("lep_relIso04DB", muRelIso04DB(idx));
         tx->pushbackToBranch<float>("lep_relIso03EA", muRelIso03EA(idx, gconf.ea_version, false));
         tx->pushbackToBranch<float>("lep_relIso03EAwLep", muRelIso03EA(idx, gconf.ea_version, true));
@@ -144,24 +148,22 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<int>("lep_id", cms3.mus_charge()[idx]*(-13));
         tx->pushbackToBranch<int>("lep_isTightPOG", isTightMuonPOG(idx));
         tx->pushbackToBranch<int>("lep_isMediumPOG", isMediumMuonPOG(idx));
-        tx->pushbackToBranch<int>("lep_isCutBasedNoIsoVetoPOG"  , false);
-        tx->pushbackToBranch<int>("lep_isCutBasedNoIsoLoosePOG" , false);
-        tx->pushbackToBranch<int>("lep_isCutBasedNoIsoMediumPOG", false);
-        tx->pushbackToBranch<int>("lep_isCutBasedNoIsoTightPOG" , false);
-        tx->pushbackToBranch<int>("lep_isCutBasedIsoVetoPOG"    , false);
-        tx->pushbackToBranch<int>("lep_isCutBasedIsoLoosePOG"   , false);
-        tx->pushbackToBranch<int>("lep_isCutBasedIsoMediumPOG"  , false);
-        tx->pushbackToBranch<int>("lep_isCutBasedIsoTightPOG"   , false);
+        tx->pushbackToBranch<int>("lep_isMVAwp80NoIsoPOG"       , true);
+        tx->pushbackToBranch<int>("lep_isMVAwp90NoIsoPOG"       , true);
+        tx->pushbackToBranch<int>("lep_isMVAwpLooseNoIsoPOG"    , true);
+        tx->pushbackToBranch<int>("lep_isMVAwp80IsoPOG"         , true);
+        tx->pushbackToBranch<int>("lep_isMVAwp90IsoPOG"         , true);
+        tx->pushbackToBranch<int>("lep_isMVAwpLooseIsoPOG"      , true);
+        tx->pushbackToBranch<int>("lep_isMVAwpHZZIsoPOG"        , true);
+        tx->pushbackToBranch<int>("lep_isCutBasedNoIsoVetoPOG"  , true);
+        tx->pushbackToBranch<int>("lep_isCutBasedNoIsoLoosePOG" , true);
+        tx->pushbackToBranch<int>("lep_isCutBasedNoIsoMediumPOG", true);
+        tx->pushbackToBranch<int>("lep_isCutBasedNoIsoTightPOG" , true);
+        tx->pushbackToBranch<int>("lep_isCutBasedIsoVetoPOG"    , true);
+        tx->pushbackToBranch<int>("lep_isCutBasedIsoLoosePOG"   , true);
+        tx->pushbackToBranch<int>("lep_isCutBasedIsoMediumPOG"  , true);
+        tx->pushbackToBranch<int>("lep_isCutBasedIsoTightPOG"   , true);
 
-        // Getting TTH MVA variable from txt files generated from nanoAOD
-        // std::vector<float> additional_vars = babymaker->additional_muon_vars.get({(int) cms3.evt_event(), (int) cms3.evt_lumiBlock(), (int) cms3.evt_run()});
-        // float val_closest_mva = -999;
-        // for (unsigned ii = 0; ii < additional_vars.size() - 1; ii += 2)
-        // {
-        //     if (fabs(additional_vars[ii+1] - cms3.mus_p4()[idx].pt()) < 0.01)
-        //         val_closest_mva = additional_vars[ii];
-        // }
-        // tx->pushbackToBranch<float>("lep_mvaTTH", val_closest_mva);
     }
 
     tx->sortVecBranchesByPt("lep_p4",
@@ -171,6 +173,7 @@ void wvzModule::LeptonModule::FillOutput()
             "lep_phi",
             "lep_energy",
             "lep_mva",
+            "lep_mvaIso",
             "lep_relIso04DB",
             "lep_relIso03EA",
             "lep_relIso03EAwLep",
@@ -178,7 +181,6 @@ void wvzModule::LeptonModule::FillOutput()
             "lep_sip3d",
             "lep_dxy",
             "lep_dz",
-            // "lep_mvaTTH"
             },
             {
             "lep_mc_id",
@@ -187,6 +189,13 @@ void wvzModule::LeptonModule::FillOutput()
             "lep_id",
             "lep_isTightPOG",
             "lep_isMediumPOG",
+            "lep_isMVAwp80NoIsoPOG",
+            "lep_isMVAwp90NoIsoPOG",
+            "lep_isMVAwpLooseNoIsoPOG",
+            "lep_isMVAwp80IsoPOG",
+            "lep_isMVAwp90IsoPOG",
+            "lep_isMVAwpLooseIsoPOG",
+            "lep_isMVAwpHZZIsoPOG",
             "lep_isCutBasedNoIsoVetoPOG",
             "lep_isCutBasedNoIsoLoosePOG",
             "lep_isCutBasedNoIsoMediumPOG",
