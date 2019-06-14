@@ -47,6 +47,7 @@ class wvzBabyMaker: public babyMaker
         static bool isPt10POGVetoElectron(int idx);
         static bool isPt10POGVetoMuon(int idx);
         bool isPOGLeptonOverlappingWithJet(int ijet);
+        bool isMVAPOGLeptonOverlappingWithJet(int ijet);
 
 };
 

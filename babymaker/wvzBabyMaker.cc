@@ -43,20 +43,6 @@ bool wvzBabyMaker::PassEventList()
             break;
         case kDilep:
             return true;
-            // if (cms3.evt_isRealData())
-            // {
-            //     if (looper.getNEventsProcessed() % 100 != 0)
-            //         return false;
-            //     else
-            //         return true;
-            // }
-            // else
-            // {
-            //     if (float(looper.getNEventsProcessed()) / float(looper.getNEventsTotalInChain()) > 0.01)
-            //         return false;
-            //     else
-            //         return true;
-            // }
             break;
         case kWVZMVA:
             return true;
@@ -477,6 +463,41 @@ bool wvzBabyMaker::isPOGLeptonOverlappingWithJet(int ijet)
     {
         const LV& p4 = cms3.els_p4()[ilep];
         if (!( isPt10POGVetoElectron(ilep) )) continue;
+        if (ROOT::Math::VectorUtil::DeltaR(jet_p4, p4) < 0.4)
+        {
+            is_overlapping = true;
+            break;
+        }
+    }
+
+    for (unsigned ilep = 0; ilep < cms3.mus_p4().size(); ++ilep)
+    {
+        const LV& p4 = cms3.mus_p4()[ilep];
+        if (!( isPt10POGVetoMuon(ilep) )) continue;
+        if (ROOT::Math::VectorUtil::DeltaR(jet_p4, p4) < 0.4)
+        {
+            is_overlapping = true;
+            break;
+        }
+    }
+
+    if (is_overlapping)
+        return true;
+
+    return false;
+}
+
+//##############################################################################################################
+bool wvzBabyMaker::isMVAPOGLeptonOverlappingWithJet(int ijet)
+{
+    bool is_overlapping = false;
+    int idx = coreJet.index[ijet];
+    const LV& jet_p4 = cms3.pfjets_p4()[idx];
+
+    for (unsigned ilep = 0; ilep < cms3.els_p4().size(); ++ilep)
+    {
+        const LV& p4 = cms3.els_p4()[ilep];
+        if (!( isPt10POGMVAwpLooseElectron(ilep) )) continue;
         if (ROOT::Math::VectorUtil::DeltaR(jet_p4, p4) < 0.4)
         {
             is_overlapping = true;
