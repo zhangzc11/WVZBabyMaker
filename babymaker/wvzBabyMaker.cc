@@ -126,13 +126,13 @@ void wvzBabyMaker::ProcessElectrons()
     switch (babyMode)
     {
         case kWVZ:
-            coreElectron.process(isPt10POGVetoElectron);
+            coreElectron.process(isPt10LooserThanPOGVetoElectron);
             break;
         case kTrilep:
-            coreElectron.process(isPt10POGVetoElectron);
+            coreElectron.process(isPt10LooserThanPOGVetoElectron);
             break;
         case kDilep:
-            coreElectron.process(isPt10POGVetoElectron);
+            coreElectron.process(isPt10LooserThanPOGVetoElectron);
             break;
         case kWVZMVA:
             coreElectron.process(isPt10POGMVAwpLooseElectron);
@@ -146,13 +146,13 @@ void wvzBabyMaker::ProcessMuons()
     switch (babyMode)
     {
         case kWVZ:
-            coreMuon.process(isPt10POGVetoMuon);
+            coreMuon.process(isPt10LooserThanPOGVetoMuon);
             break;
         case kTrilep:
-            coreMuon.process(isPt10POGVetoMuon);
+            coreMuon.process(isPt10LooserThanPOGVetoMuon);
             break;
         case kDilep:
-            coreMuon.process(isPt10POGVetoMuon);
+            coreMuon.process(isPt10LooserThanPOGVetoMuon);
             break;
         case kWVZMVA:
             coreMuon.process(isPt10POGVetoMuon);
@@ -168,17 +168,24 @@ bool wvzBabyMaker::PassSelection()
     {
         if (coreElectron.index.size() + coreMuon.index.size() < 4)
             return false;
+        int nVetoLep = 0;
         int nLepPt25 = 0;
         for (auto& iel : coreElectron.index)
         {
             if (cms3.els_p4()[iel].pt() > 25.)
                 nLepPt25++;
+            if (isPt10POGVetoElectron(iel))
+                nVetoLep++;
         }
         for (auto& imu : coreMuon.index)
         {
             if (cms3.mus_p4()[imu].pt() > 25.)
                 nLepPt25++;
+            if (isPt10POGVetoMuon(imu))
+                nVetoLep++;
         }
+        if (nVetoLep < 2)
+            return false;
         if (nLepPt25 < 2)
             return false;
         return true;
@@ -187,17 +194,24 @@ bool wvzBabyMaker::PassSelection()
     {
         if (coreElectron.index.size() + coreMuon.index.size() < 3)
             return false;
+        int nVetoLep = 0;
         int nLepPt25 = 0;
         for (auto& iel : coreElectron.index)
         {
             if (cms3.els_p4()[iel].pt() > 25.)
                 nLepPt25++;
+            if (isPt10POGVetoElectron(iel))
+                nVetoLep++;
         }
         for (auto& imu : coreMuon.index)
         {
             if (cms3.mus_p4()[imu].pt() > 25.)
                 nLepPt25++;
+            if (isPt10POGVetoMuon(imu))
+                nVetoLep++;
         }
+        if (nVetoLep < 2)
+            return false;
         if (nLepPt25 < 2)
             return false;
         return true;
@@ -341,7 +355,7 @@ bool wvzBabyMaker::isPt10Muon(int idx)
 bool wvzBabyMaker::isPt10POGVetoElectron(int idx)
 {
     if (!( cms3.els_p4()[idx].pt() > 10.          )) return false;
-    if (!(isVetoElectronPOGfall17_v2(idx)        )) return false;
+    if (!( isVetoElectronPOGfall17_v2(idx)        )) return false;
     if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;
     if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
     {
@@ -353,6 +367,7 @@ bool wvzBabyMaker::isPt10POGVetoElectron(int idx)
         if (!( fabs(cms3.els_dzPV()[idx]) < 0.2       )) return false;
         if (!( fabs(cms3.els_dxyPV()[idx]) < 0.1      )) return false;
     }
+    if (!( cms3.els_ip3d()[idx] / cms3.els_ip3derr()[idx] < 4. )) return false;
     return true;
 }
 
@@ -375,6 +390,7 @@ bool wvzBabyMaker::isPt10LooserThanPOGVetoElectron(int idx)
         if (!( fabs(cms3.els_dzPV()[idx]) < 0.2       )) return false;
         if (!( fabs(cms3.els_dxyPV()[idx]) < 0.1      )) return false;
     }
+    if (!( cms3.els_ip3d()[idx] / cms3.els_ip3derr()[idx] < 4. )) return false;
     return true;
 }
 
@@ -423,7 +439,7 @@ bool wvzBabyMaker::isPt10POGMVAwpHZZElectron(int idx)
 bool wvzBabyMaker::isPt10POGVetoMuon(int idx)
 {
     if (!( cms3.mus_p4()[idx].pt() > 10.        )) return false;
-    if (!( isMediumMuonPOG(idx)                  )) return false;
+    if (!( isMediumMuonPOG(idx)                 )) return false;
     if (!( fabs(cms3.mus_p4()[idx].eta()) < 2.4 )) return false;
     if (!( muRelIso04DB(idx)  < 0.25            )) return false;
     if (fabs(cms3.mus_p4()[idx].eta()) <= 1.479)
@@ -436,6 +452,7 @@ bool wvzBabyMaker::isPt10POGVetoMuon(int idx)
         if (!( fabs(cms3.mus_dzPV()[idx]) < 0.2       )) return false;
         if (!( fabs(cms3.mus_dxyPV()[idx]) < 0.1      )) return false;
     }
+    if (!( cms3.els_ip3d()[idx] / cms3.els_ip3derr()[idx] < 4. )) return false;
     return true;
 }
 
@@ -444,7 +461,7 @@ bool wvzBabyMaker::isPt10POGVetoMuon(int idx)
 bool wvzBabyMaker::isPt10LooserThanPOGVetoMuon(int idx)
 {
     if (!( cms3.mus_p4()[idx].pt() > 10.        )) return false;
-    if (!( isMediumMuonPOG(idx)                  )) return false;
+    if (!( isMediumMuonPOG(idx)                 )) return false;
     if (!( fabs(cms3.mus_p4()[idx].eta()) < 2.4 )) return false;
     if (!( muRelIso04DB(idx)  < 0.8             )) return false;
     if (fabs(cms3.mus_p4()[idx].eta()) <= 1.479)
@@ -457,6 +474,7 @@ bool wvzBabyMaker::isPt10LooserThanPOGVetoMuon(int idx)
         if (!( fabs(cms3.mus_dzPV()[idx]) < 0.2       )) return false;
         if (!( fabs(cms3.mus_dxyPV()[idx]) < 0.1      )) return false;
     }
+    if (!( cms3.els_ip3d()[idx] / cms3.els_ip3derr()[idx] < 4. )) return false;
     return true;
 }
 
