@@ -196,7 +196,8 @@ else
         INFILE=${OUTPUTROOTNAME}
         cp ${INFILE} ${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}.root
     else
-        if [ "x${X509_USER_PROXY}" == "x" ]; then
+        HOSTNAME=$(hostname)
+        if [ "x${X509_USER_PROXY}" == "x" ] || [[ ${HOSTNAME} == *"uaf"* ]]; then
             echo "Copying outputs to Hadoop via cp."
             mkdir -p ${OUTPUTDIR}
             INFILE=${OUTPUTROOTNAME//.root/}

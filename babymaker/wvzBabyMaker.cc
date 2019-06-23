@@ -341,7 +341,29 @@ bool wvzBabyMaker::isPt10Muon(int idx)
 bool wvzBabyMaker::isPt10POGVetoElectron(int idx)
 {
     if (!( cms3.els_p4()[idx].pt() > 10.          )) return false;
-    if (!( isVetoElectronPOGfall17_v2(idx)        )) return false;
+    if (!(isVetoElectronPOGfall17_v2(idx)        )) return false;
+    if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;
+    if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
+    {
+        if (!( fabs(cms3.els_dzPV()[idx]) < 0.1       )) return false;
+        if (!( fabs(cms3.els_dxyPV()[idx]) < 0.05     )) return false;
+    }
+    else
+    {
+        if (!( fabs(cms3.els_dzPV()[idx]) < 0.2       )) return false;
+        if (!( fabs(cms3.els_dxyPV()[idx]) < 0.1      )) return false;
+    }
+    return true;
+}
+
+//##############################################################################################################
+// Very Loose Lepton ID
+bool wvzBabyMaker::isPt10LooserThanPOGVetoElectron(int idx)
+{
+    if (!( cms3.els_p4()[idx].pt() > 10.          )) return false;
+    // if (!(isVetoElectronPOGfall17_v2(idx)        )) return false;
+    if (!( isVetoElectronPOGfall17noIso_v2(idx)   )) return false;
+    if (!( eleRelIso03EA(idx, 4) < 0.6            )) return false;
     if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5   )) return false;
     if (fabs(cms3.els_etaSC()[idx]) <= 1.479)
     {
@@ -401,9 +423,30 @@ bool wvzBabyMaker::isPt10POGMVAwpHZZElectron(int idx)
 bool wvzBabyMaker::isPt10POGVetoMuon(int idx)
 {
     if (!( cms3.mus_p4()[idx].pt() > 10.        )) return false;
-    if (!( isLooseMuonPOG(idx)                  )) return false;
+    if (!( isMediumMuonPOG(idx)                  )) return false;
     if (!( fabs(cms3.mus_p4()[idx].eta()) < 2.4 )) return false;
     if (!( muRelIso04DB(idx)  < 0.25            )) return false;
+    if (fabs(cms3.mus_p4()[idx].eta()) <= 1.479)
+    {
+        if (!( fabs(cms3.mus_dzPV()[idx]) < 0.1       )) return false;
+        if (!( fabs(cms3.mus_dxyPV()[idx]) < 0.05     )) return false;
+    }
+    else
+    {
+        if (!( fabs(cms3.mus_dzPV()[idx]) < 0.2       )) return false;
+        if (!( fabs(cms3.mus_dxyPV()[idx]) < 0.1      )) return false;
+    }
+    return true;
+}
+
+//##############################################################################################################
+// Very Loose Lepton ID
+bool wvzBabyMaker::isPt10LooserThanPOGVetoMuon(int idx)
+{
+    if (!( cms3.mus_p4()[idx].pt() > 10.        )) return false;
+    if (!( isMediumMuonPOG(idx)                  )) return false;
+    if (!( fabs(cms3.mus_p4()[idx].eta()) < 2.4 )) return false;
+    if (!( muRelIso04DB(idx)  < 0.8             )) return false;
     if (fabs(cms3.mus_p4()[idx].eta()) <= 1.479)
     {
         if (!( fabs(cms3.mus_dzPV()[idx]) < 0.1       )) return false;
