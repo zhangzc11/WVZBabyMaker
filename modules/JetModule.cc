@@ -129,7 +129,7 @@ void wvzModule::JetModule::FillOutput()
 
             // we will stick with loose b-tagging
             deepcsv_sf_jet_pt.push_back(jet.pt());
-            deepcsv_sf_jet_eta;.push_back(jet.eta())
+            deepcsv_sf_jet_eta.push_back(jet.eta());
             deepcsv_sf_jet_deepCSV.push_back(current_btag_score_val);
             deepcsv_sf_jet_flavour.push_back(abs(hadron_flavor));
 
