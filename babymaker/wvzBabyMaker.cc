@@ -27,6 +27,9 @@ void wvzBabyMaker::PrintBabyMode()
         case kDilep:
             std::cout << "Set to Dilep Baby Maker Mode" << std::endl;
             break;
+        case kWVZMVA:
+            std::cout << "Set to WVZMVA Baby Maker Mode" << std::endl;
+            break;
     }
 }
 
@@ -126,13 +129,13 @@ void wvzBabyMaker::ProcessElectrons()
     switch (babyMode)
     {
         case kWVZ:
-            coreElectron.process(isPt10POGVetoElectron);
+            coreElectron.process(isPt10LooserThanPOGVetoElectron);
             break;
         case kTrilep:
-            coreElectron.process(isPt10POGVetoElectron);
+            coreElectron.process(isPt10LooserThanPOGVetoElectron);
             break;
         case kDilep:
-            coreElectron.process(isPt10POGVetoElectron);
+            coreElectron.process(isPt10LooserThanPOGVetoElectron);
             break;
         case kWVZMVA:
             coreElectron.process(isPt10POGMVAwpLooseElectron);
@@ -146,13 +149,13 @@ void wvzBabyMaker::ProcessMuons()
     switch (babyMode)
     {
         case kWVZ:
-            coreMuon.process(isPt10POGVetoMuon);
+            coreMuon.process(isPt10LooserThanPOGVetoMuon);
             break;
         case kTrilep:
-            coreMuon.process(isPt10POGVetoMuon);
+            coreMuon.process(isPt10LooserThanPOGVetoMuon);
             break;
         case kDilep:
-            coreMuon.process(isPt10POGVetoMuon);
+            coreMuon.process(isPt10LooserThanPOGVetoMuon);
             break;
         case kWVZMVA:
             coreMuon.process(isPt10POGVetoMuon);
