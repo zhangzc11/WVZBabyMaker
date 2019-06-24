@@ -3,7 +3,7 @@
 using namespace std;
 
 //##############################################################################################################
-babyMaker::babyMaker() : coreBtagSFFastSim(true)
+babyMaker::babyMaker()
 {
 }
 
@@ -137,6 +137,9 @@ void babyMaker::Init()
 
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
     coreFatJec.setFatJECFor(looper.getCurrentFileName());
+
+    // Set up btagging deepcsv scalefactor machinery
+    coreBtagDeepCSVSF.setup(false, gconf.year);
 
     // Signal or BSM samples need some specifics things to be set prior to starting the processing
     AddOutput();

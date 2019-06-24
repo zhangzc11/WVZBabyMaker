@@ -24,6 +24,7 @@ void wvzModule::LeptonModule::AddOutput()
     tx->createBranch<vector<float>>("lep_sip3d");
     tx->createBranch<vector<float>>("lep_dxy");
     tx->createBranch<vector<float>>("lep_dz");
+    tx->createBranch<vector<int>>("lep_mc_motherid");
     tx->createBranch<vector<int>>("lep_mc_id");
     tx->createBranch<vector<int>>("lep_motherIdv2");
     tx->createBranch<vector<int>>("lep_idx");
@@ -75,17 +76,20 @@ void wvzModule::LeptonModule::FillOutput()
             int mc_id = 0;
             if (isFromW        (11, idx)) mc_id =  1;
             if (isFromZ        (11, idx)) mc_id =  2;
+            if (isFromTau      (11, idx)) mc_id =  3;
             if (isFromB        (11, idx)) mc_id = -1;
             if (isFromC        (11, idx)) mc_id = -2;
             if (isFromLight    (11, idx)) mc_id = -3;
             if (isFromLightFake(11, idx)) mc_id = -4;
             tx->pushbackToBranch<int>("lep_motherIdv2" , motherId_genIdx.first);
             tx->pushbackToBranch<int>("lep_mc_id"      , mc_id);
+            tx->pushbackToBranch<int>("lep_mc_motherid", cms3.els_mc_motherid()[idx]);
         }
         else
         {
             tx->pushbackToBranch<int>("lep_motherIdv2" , 99);
             tx->pushbackToBranch<int>("lep_mc_id"      , 99);
+            tx->pushbackToBranch<int>("lep_mc_motherid", 99);
         }
         tx->pushbackToBranch<int>("lep_idx", idx);
         tx->pushbackToBranch<int>("lep_id", cms3.els_charge()[idx]*(-11));
@@ -132,17 +136,20 @@ void wvzModule::LeptonModule::FillOutput()
             int mc_id = 0;
             if (isFromW        (13, idx)) mc_id =  1;
             if (isFromZ        (13, idx)) mc_id =  2;
+            if (isFromTau      (13, idx)) mc_id =  3;
             if (isFromB        (13, idx)) mc_id = -1;
             if (isFromC        (13, idx)) mc_id = -2;
             if (isFromLight    (13, idx)) mc_id = -3;
             if (isFromLightFake(13, idx)) mc_id = -4;
             tx->pushbackToBranch<int>("lep_motherIdv2" , motherId_genIdx.first);
             tx->pushbackToBranch<int>("lep_mc_id"      , mc_id);
+            tx->pushbackToBranch<int>("lep_mc_motherid", cms3.mus_mc_motherid()[idx]);
         }
         else
         {
             tx->pushbackToBranch<int>("lep_motherIdv2" , 99);
             tx->pushbackToBranch<int>("lep_mc_id"      , 99);
+            tx->pushbackToBranch<int>("lep_mc_motherid", 99);
         }
         tx->pushbackToBranch<int>("lep_idx", idx);
         tx->pushbackToBranch<int>("lep_id", cms3.mus_charge()[idx]*(-13));
@@ -183,6 +190,7 @@ void wvzModule::LeptonModule::FillOutput()
             "lep_dz",
             },
             {
+            "lep_mc_motherid",
             "lep_mc_id",
             "lep_motherIdv2",
             "lep_idx",

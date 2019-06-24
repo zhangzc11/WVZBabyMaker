@@ -45,8 +45,11 @@ void wvzModule::JetModule::FillOutput()
     int nbmed = 0;
     float ht = 0;
 
-    // Clear SF
-    babymaker->coreBtagSF.clearSF();
+    // For deep csv btagging sf
+    std::vector<double> deepcsv_sf_jet_pt;
+    std::vector<double> deepcsv_sf_jet_eta;
+    std::vector<double> deepcsv_sf_jet_deepCSV;
+    std::vector<int> deepcsv_sf_jet_flavour;
 
     // Loop over selected jets
     // coreJet.index contains index to the jets in cms3.pfjets_p4() vector
@@ -74,35 +77,9 @@ void wvzModule::JetModule::FillOutput()
         // Get the JEC shift
         // float shift = babymaker->coreJet.shifts[ijet];
 
-        static TString deepCSV_prefix = "NULL";
-        if (deepCSV_prefix == "NULL")
-        {
-            for (TString discName : cms3.pfjets_bDiscriminatorNames())
-            {
-                if (discName.Contains("pfDeepCSV"))    // 2017 convention
-                {
-                    deepCSV_prefix = "pfDeepCSV";
-                    break;
-                }
-                else if (discName.Contains("deepFlavour"))    // 2016 convention
-                {
-                    deepCSV_prefix = "deepFlavour";
-                    break;
-                }
-            } // end loop over b discriminator names
-            if (deepCSV_prefix == "NULL")
-            {
-                cout << "Error:" << __FUNCTION__ << "Can't find DeepCSV discriminator names!" << endl;
-                exit(1);
-            }
-        }
-
         // Get the b-tagging value
-        float current_btag_score_val = -2;
-        if (gconf.year == 2016)
-            current_btag_score_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
-        else if (gconf.year == 2017 || gconf.year == 2018)
-            current_btag_score_val = cms3.getbtagvalue(deepCSV_prefix + "JetTags:probb", ijet) + cms3.getbtagvalue(deepCSV_prefix + "JetTags:probbb", ijet);
+        float current_btag_score_val = cms3.pfjets_pfDeepCSVJetTagsprobbPlusprobbb()[ijet];
+        int hadron_flavor = cms3.pfjets_hadronFlavour()[ijet];
 
         LV jet = cms3.pfjets_p4()[idx] * cms3.pfjets_undoJEC()[idx] * corr;
 
@@ -139,17 +116,8 @@ void wvzModule::JetModule::FillOutput()
 
         }
 
-        float btag_loose_threshold = -999;
-        if (gconf.year == 2016)
-            btag_loose_threshold = gconf.WP_CSVv2_LOOSE;
-        else if (gconf.year == 2017 or gconf.year == 2018)
-            btag_loose_threshold = gconf.WP_DEEPCSV_LOOSE;
-
-        float btag_medium_threshold = -999;
-        if (gconf.year == 2016)
-            btag_medium_threshold = gconf.WP_CSVv2_MEDIUM;
-        else if (gconf.year == 2017 or gconf.year == 2018)
-            btag_medium_threshold = gconf.WP_DEEPCSV_MEDIUM;
+        float btag_loose_threshold = gconf.WP_DEEPCSV_LOOSE;
+        float btag_medium_threshold = gconf.WP_DEEPCSV_MEDIUM;
 
         // Counting N-btag jets: Require minimum of 20 GeV for increased acceptance
         if (jet.pt() > 20. and fabs(jet.eta()) < 2.4)
@@ -159,7 +127,11 @@ void wvzModule::JetModule::FillOutput()
             if (current_btag_score_val >= btag_loose_threshold) nb++;
             if (current_btag_score_val >= btag_medium_threshold) nbmed++;
 
-            babymaker->coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
+            // we will stick with loose b-tagging
+            deepcsv_sf_jet_pt.push_back(jet.pt());
+            deepcsv_sf_jet_eta;.push_back(jet.eta())
+            deepcsv_sf_jet_deepCSV.push_back(current_btag_score_val);
+            deepcsv_sf_jet_flavour.push_back(abs(hadron_flavor));
 
         }
 
@@ -186,17 +158,27 @@ void wvzModule::JetModule::FillOutput()
 
     } // End looping over jets
 
+    double wgt_btagsf = 0;
+    double wgt_btagsf_hf_up = 0;
+    double wgt_btagsf_hf_dn = 0;
+    double wgt_btagsf_lf_up = 0;
+    double wgt_btagsf_lf_dn = 0;
+    double wgt_btagsf_fs_up = 0;
+    double wgt_btagsf_fs_dn = 0;
+    int WP = 0; // Loose working point 1 or 2 for med or tight
+    babymaker->coreBtagDeepCSVSF.getBTagWeight( WP, deepcsv_sf_jet_pt, deepcsv_sf_jet_eta, deepcsv_sf_jet_deepCSV, deepcsv_sf_jet_flavour, wgt_btagsf, wgt_btagsf_hf_up, wgt_btagsf_hf_dn, wgt_btagsf_lf_up, wgt_btagsf_lf_dn, wgt_btagsf_fs_up, wgt_btagsf_fs_dn );
+
     tx->setBranch<int>("nj", nj);
     tx->setBranch<int>("nb", nb);
     tx->setBranch<int>("nbmed", nbmed);
     tx->setBranch<float>("ht", ht);
     tx->setBranch<int>("nj_cen", nj_cen);
 
-    tx->setBranch<float>("weight_btagsf"         , babymaker->coreBtagSF.btagprob_data     / babymaker->coreBtagSF.btagprob_mc);
-    tx->setBranch<float>("weight_btagsf_heavy_DN", babymaker->coreBtagSF.btagprob_heavy_DN / babymaker->coreBtagSF.btagprob_mc);
-    tx->setBranch<float>("weight_btagsf_heavy_UP", babymaker->coreBtagSF.btagprob_heavy_UP / babymaker->coreBtagSF.btagprob_mc);
-    tx->setBranch<float>("weight_btagsf_light_DN", babymaker->coreBtagSF.btagprob_light_DN / babymaker->coreBtagSF.btagprob_mc);
-    tx->setBranch<float>("weight_btagsf_light_UP", babymaker->coreBtagSF.btagprob_light_UP / babymaker->coreBtagSF.btagprob_mc);
+    tx->setBranch<float>("weight_btagsf"         , wgt_btagsf);
+    tx->setBranch<float>("weight_btagsf_heavy_DN", wgt_btagsf_hf_dn);
+    tx->setBranch<float>("weight_btagsf_heavy_UP", wgt_btagsf_hf_up);
+    tx->setBranch<float>("weight_btagsf_light_DN", wgt_btagsf_lf_dn);
+    tx->setBranch<float>("weight_btagsf_light_UP", wgt_btagsf_lf_up);
 
     tx->sortVecBranchesByPt("jets_p4",
             {
