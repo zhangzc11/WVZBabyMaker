@@ -112,6 +112,17 @@ def get_master_list():
             "baby_type" : "WVZMVA"
             }
 
+    # sample_info = {
+    #     "/WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                               : "wwz_amcatnlo"               , 
+    #     "/WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                      : "wz_3lv_amcatnlo"            , 
+    #     }
+
+    # dinfos["wvz_2016_94x"] = {
+    #         "samples" : sample_info,
+    #         "year" : 2016,
+    #         "baby_type" : "WVZ"
+    #         }
+
     #######################################
     ######## WWW BABY MC 2017 94x #########
     #######################################
@@ -208,6 +219,17 @@ def get_master_list():
             "baby_type" : "WVZMVA"
             }
 
+    # sample_info = {
+    #     "/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                         : "wwz_amcatnlo"               ,
+    #     "/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM"                           : "wz_3lv_amcatnlo"            ,
+    #     }
+
+    # dinfos["wvz_2017_94x"] = {
+    #         "samples" : sample_info,
+    #         "year" : 2017,
+    #         "baby_type" : "WVZ"
+    #         }
+
     ########################################
     ######## WWW BABY MC 2018 102x #########
     ########################################
@@ -263,7 +285,7 @@ def get_master_list():
         "/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "zzz_amcatnlo"               ,
         "/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                        : "vh_nonbb_amcatnlo"          ,
         "/WWZJetsTo4L2Nu_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                     : "wwz_4l2v_amcatnlo"          ,
-        "/ZZZJetsTo4L2Nu_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                     : "zzz_4l2v_amcatnlo"          ,
+        # "/ZZZJetsTo4L2Nu_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                     : "zzz_4l2v_amcatnlo"          ,
 
         # Z + Jets/Gamma
         "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                    : "dy_m1050_madgraph"          ,
@@ -337,6 +359,17 @@ def get_master_list():
             "year" : 2018,
             "baby_type" : "WVZMVA"
             }
+
+    # sample_info = {
+    #     "/WWZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "wwz_amcatnlo"               ,
+    #     "/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                         : "wz_3lv_amcatnlo"            ,
+    #     }
+
+    # dinfos["wvz_2018_102x"] = {
+    #         "samples" : sample_info,
+    #         "year" : 2018,
+    #         "baby_type" : "WVZ"
+    #         }
 
     return dinfos
 

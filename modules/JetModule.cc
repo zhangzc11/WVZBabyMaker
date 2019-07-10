@@ -21,11 +21,26 @@ void wvzModule::JetModule::AddOutput()
     tx->createBranch<vector<float>>("jets_cen_phi");
     tx->createBranch<vector<float>>("jets_cen_mass");
 
+    tx->createBranch<vector<LV>>("rawjets_p4");
+    tx->createBranch<vector<float>>("rawjets_pt");
+    tx->createBranch<vector<float>>("rawjets_eta");
+    tx->createBranch<vector<float>>("rawjets_phi");
+    tx->createBranch<vector<float>>("rawjets_mass");
+    tx->createBranch<vector<float>>("rawjets_JEC");
+    tx->createBranch<vector<int>>("rawjets_passJetID");
+    tx->createBranch<vector<int>>("rawjets_isORwLep");
+
     tx->createBranch<int>("nj");
+    tx->createBranch<int>("nj_up");
+    tx->createBranch<int>("nj_dn");
     tx->createBranch<int>("nb");
+    tx->createBranch<int>("nb_up");
+    tx->createBranch<int>("nb_dn");
     tx->createBranch<int>("nbmed");
     tx->createBranch<float>("ht");
     tx->createBranch<int>("nj_cen");
+    tx->createBranch<int>("nj_cen_up");
+    tx->createBranch<int>("nj_cen_dn");
 
     tx->createBranch<float>("weight_btagsf");
     tx->createBranch<float>("weight_btagsf_heavy_DN");
@@ -40,8 +55,14 @@ void wvzModule::JetModule::FillOutput()
 
     // Variables to compute and fill to the ttree output
     int nj = 0;
+    int nj_up = 0;
+    int nj_dn = 0;
     int nj_cen = 0;
+    int nj_cen_up = 0;
+    int nj_cen_dn = 0;
     int nb = 0;
+    int nb_up = 0;
+    int nb_dn = 0;
     int nbmed = 0;
     float ht = 0;
 
@@ -61,27 +82,44 @@ void wvzModule::JetModule::FillOutput()
         // Get the JEC correction
         float corr = babymaker->coreJet.corrs[ijet];
 
+        // Jet ID
+        bool passJetID = false;
         if (gconf.year == 2016)
         {
-            if (!isLoosePFJet_Summer16_v1(idx)) { continue; }
+            passJetID = isLoosePFJet_Summer16_v1(idx);
         }
         else if (gconf.year == 2017)
         {
-            if (!isTightPFJet_2017_v1(idx)) { continue; }
+            passJetID = isTightPFJet_2017_v1(idx);
         }
         else if (gconf.year == 2018)
         {
-            if (!isTightPFJet_2018_v1(idx)) { continue; }
+            passJetID = isTightPFJet_2018_v1(idx);
         }
 
+        LV rawjet = cms3.pfjets_p4()[idx] * cms3.pfjets_undoJEC()[idx];
+        tx->pushbackToBranch<LV>("rawjets_p4", rawjet);
+        tx->pushbackToBranch<float>("rawjets_pt", rawjet.pt());
+        tx->pushbackToBranch<float>("rawjets_eta", rawjet.eta());
+        tx->pushbackToBranch<float>("rawjets_phi", rawjet.phi());
+        tx->pushbackToBranch<float>("rawjets_mass", rawjet.mass());
+        tx->pushbackToBranch<float>("rawjets_JEC", corr);
+        tx->pushbackToBranch<int>("rawjets_passJetID", passJetID);
+        tx->pushbackToBranch<int>("rawjets_isORwLep", babymaker->isPOGLeptonOverlappingWithJet(ijet));
+
+        if (not passJetID)
+            continue;
+
         // Get the JEC shift
-        // float shift = babymaker->coreJet.shifts[ijet];
+        float shift = babymaker->coreJet.shifts[ijet];
 
         // Get the b-tagging value
         float current_btag_score_val = cms3.pfjets_pfDeepCSVJetTagsprobbPlusprobbb()[ijet];
         int hadron_flavor = cms3.pfjets_hadronFlavour()[ijet];
 
         LV jet = cms3.pfjets_p4()[idx] * cms3.pfjets_undoJEC()[idx] * corr;
+        LV jet_up = jet * (1. + shift);
+        LV jet_dn = jet * (1. - shift);
 
         // Check whether this jet overlaps with any of the leptons
         switch (babymaker->babyMode)
@@ -111,8 +149,32 @@ void wvzModule::JetModule::FillOutput()
             nj++;
             ht += pt;
 
-            if (fabs(jet.eta()) < 2.4)
+            if (fabs(jet.eta()) < 2.5)
                 nj_cen++;
+
+        }
+
+        // Require pt minimum requirement of 30 GeV for safety
+        if (jet_up.pt() > 30)
+        {
+
+            // Increase the counter for the number of jets
+            nj_up++;
+
+            if (fabs(jet.eta()) < 2.5)
+                nj_cen_up++;
+
+        }
+
+        // Require pt minimum requirement of 30 GeV for safety
+        if (jet_dn.pt() > 30)
+        {
+
+            // Increase the counter for the number of jets
+            nj_dn++;
+
+            if (fabs(jet.eta()) < 2.5)
+                nj_cen_dn++;
 
         }
 
@@ -135,8 +197,26 @@ void wvzModule::JetModule::FillOutput()
 
         }
 
+        // Counting N-btag jets: Require minimum of 20 GeV for increased acceptance
+        if (jet_up.pt() > 20. and fabs(jet_up.eta()) < 2.4)
+        {
+
+            // Increase the counter for the number of b-jets
+            if (current_btag_score_val >= btag_loose_threshold) nb_up++;
+
+        }
+
+        // Counting N-btag jets: Require minimum of 20 GeV for increased acceptance
+        if (jet_dn.pt() > 20. and fabs(jet_dn.eta()) < 2.4)
+        {
+
+            // Increase the counter for the number of b-jets
+            if (current_btag_score_val >= btag_loose_threshold) nb_dn++;
+
+        }
+
         // Adding jets to the container
-        if (jet.pt() > 20.)
+        if (jet.pt() > 30.)
         {
             tx->pushbackToBranch<LV>("jets_p4", jet);
             tx->pushbackToBranch<float>("jets_pt", jet.pt());
@@ -146,7 +226,7 @@ void wvzModule::JetModule::FillOutput()
         }
 
         // Adding jets to the container
-        if (jet.pt() > 20.)
+        if (jet.pt() > 30. and fabs(jet.eta()) < 2.5)
         {
             tx->pushbackToBranch<LV>("jets_cen_p4", jet);
             tx->pushbackToBranch<float>("jets_cen_pt", jet.pt());
@@ -169,10 +249,16 @@ void wvzModule::JetModule::FillOutput()
     babymaker->coreBtagDeepCSVSF.getBTagWeight( WP, deepcsv_sf_jet_pt, deepcsv_sf_jet_eta, deepcsv_sf_jet_deepCSV, deepcsv_sf_jet_flavour, wgt_btagsf, wgt_btagsf_hf_up, wgt_btagsf_hf_dn, wgt_btagsf_lf_up, wgt_btagsf_lf_dn, wgt_btagsf_fs_up, wgt_btagsf_fs_dn );
 
     tx->setBranch<int>("nj", nj);
+    tx->setBranch<int>("nj_up", nj_up);
+    tx->setBranch<int>("nj_dn", nj_dn);
     tx->setBranch<int>("nb", nb);
+    tx->setBranch<int>("nb_up", nb_up);
+    tx->setBranch<int>("nb_dn", nb_dn);
     tx->setBranch<int>("nbmed", nbmed);
     tx->setBranch<float>("ht", ht);
     tx->setBranch<int>("nj_cen", nj_cen);
+    tx->setBranch<int>("nj_cen_up", nj_cen_up);
+    tx->setBranch<int>("nj_cen_dn", nj_cen_dn);
 
     tx->setBranch<float>("weight_btagsf"         , wgt_btagsf);
     tx->setBranch<float>("weight_btagsf_heavy_DN", wgt_btagsf_hf_dn);
@@ -195,5 +281,19 @@ void wvzModule::JetModule::FillOutput()
             "jets_cen_phi",
             "jets_cen_mass"
             },{},{});
+
+    tx->sortVecBranchesByPt("rawjets_p4",
+            {
+            "rawjets_pt",
+            "rawjets_eta",
+            "rawjets_phi",
+            "rawjets_mass",
+            "rawjets_JEC"
+            },
+            {
+            "rawjets_passJetID",
+            "rawjets_isORwLep"
+            }
+            ,{});
 
 }

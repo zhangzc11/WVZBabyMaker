@@ -23,6 +23,7 @@ int babyMaker::ProcessCMS4(TString filepaths, int max_events, int idx, bool verb
     // Initialize Looper
     looper.init(chain, &cms3, max_events);
 //    looper.setNbadEventThreshold(0); // If there are any bad events throw std::ios_base::failure exception.
+    looper.setEventIndexMap("eventindexmap.txt");
 
     // Initializer job index
     job_index = idx;

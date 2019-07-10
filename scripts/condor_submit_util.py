@@ -70,7 +70,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
                 output_name          = "output.root",
                 files_per_output     = 1,
                 # files_per_output     = 1,
-                condor_submit_params = {"sites" : "T2_US_UCSD,UAF"},
+                condor_submit_params = {"sites" : "T2_US_UCSD"},
                 # condor_submit_params = {"sites" : "UAF,T2_US_Wisconsin,T2_US_Florida,T2_US_Nebraska,T2_US_Caltech,T2_US_MIT,T2_US_Purdue"},
                 # condor_submit_params = {"sites" : "UAF,T2_US_Wisconsin,T2_US_Florida,T2_US_Nebraska,T2_US_Caltech,T2_US_MIT"},
                 # condor_submit_params = {"sites" : "UAF"},
@@ -78,6 +78,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
                 flush                = True,
                 max_jobs             = 5 if dotestrun else 0,
                 # min_completion_fraction = 1.0 if "Run201" in sample else 0.9,
+                # min_completion_fraction = 0.9,
                 #no_load_from_backup  = True,
                 )
 

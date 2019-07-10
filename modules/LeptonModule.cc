@@ -13,12 +13,14 @@ void wvzModule::LeptonModule::AddOutput()
     tx->createBranch<vector<LV>>("lep_p4");
     tx->createBranch<vector<float>>("lep_pt");
     tx->createBranch<vector<float>>("lep_eta");
+    tx->createBranch<vector<float>>("lep_etaSC");
     tx->createBranch<vector<float>>("lep_phi");
     tx->createBranch<vector<float>>("lep_energy");
     tx->createBranch<vector<float>>("lep_mva");
     tx->createBranch<vector<float>>("lep_mvaIso");
     tx->createBranch<vector<float>>("lep_relIso04DB");
     tx->createBranch<vector<float>>("lep_relIso03EA");
+    tx->createBranch<vector<float>>("lep_relIso03EAv4");
     tx->createBranch<vector<float>>("lep_relIso03EAwLep");
     tx->createBranch<vector<float>>("lep_ip3d");
     tx->createBranch<vector<float>>("lep_sip3d");
@@ -59,12 +61,14 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<LV>("lep_p4", cms3.els_p4()[idx]);
         tx->pushbackToBranch<float>("lep_pt", cms3.els_p4()[idx].pt());
         tx->pushbackToBranch<float>("lep_eta", cms3.els_p4()[idx].eta());
+        tx->pushbackToBranch<float>("lep_etaSC", cms3.els_etaSC()[idx]);
         tx->pushbackToBranch<float>("lep_phi", cms3.els_p4()[idx].phi());
         tx->pushbackToBranch<float>("lep_energy", cms3.els_p4()[idx].energy());
         tx->pushbackToBranch<float>("lep_mva", cms3.els_VIDFall17V2NoIsoMvaValue().at(idx));
         tx->pushbackToBranch<float>("lep_mvaIso", cms3.els_VIDFall17V2IsoMvaValue().at(idx));
         tx->pushbackToBranch<float>("lep_relIso04DB", -999);
         tx->pushbackToBranch<float>("lep_relIso03EA", eleRelIso03EA(idx, gconf.ea_version, false));
+        tx->pushbackToBranch<float>("lep_relIso03EAv4", eleRelIso03EA(idx, 4, false));
         tx->pushbackToBranch<float>("lep_relIso03EAwLep", eleRelIso03EA(idx, gconf.ea_version, true));
         tx->pushbackToBranch<float>("lep_ip3d", cms3.els_ip3d()[idx]);
         tx->pushbackToBranch<float>("lep_sip3d", cms3.els_ip3d()[idx] / cms3.els_ip3derr()[idx]);
@@ -119,12 +123,14 @@ void wvzModule::LeptonModule::FillOutput()
         tx->pushbackToBranch<LV>("lep_p4", cms3.mus_p4()[idx]);
         tx->pushbackToBranch<float>("lep_pt", cms3.mus_p4()[idx].pt());
         tx->pushbackToBranch<float>("lep_eta", cms3.mus_p4()[idx].eta());
+        tx->pushbackToBranch<float>("lep_etaSC", -999);
         tx->pushbackToBranch<float>("lep_phi", cms3.mus_p4()[idx].phi());
         tx->pushbackToBranch<float>("lep_energy", cms3.mus_p4()[idx].energy());
         tx->pushbackToBranch<float>("lep_mva", 999);
         tx->pushbackToBranch<float>("lep_mvaIso", 999);
         tx->pushbackToBranch<float>("lep_relIso04DB", muRelIso04DB(idx));
         tx->pushbackToBranch<float>("lep_relIso03EA", muRelIso03EA(idx, gconf.ea_version, false));
+        tx->pushbackToBranch<float>("lep_relIso03EAv4", muRelIso03EA(idx, 4, false));
         tx->pushbackToBranch<float>("lep_relIso03EAwLep", muRelIso03EA(idx, gconf.ea_version, true));
         tx->pushbackToBranch<float>("lep_ip3d", cms3.mus_ip3d()[idx]);
         tx->pushbackToBranch<float>("lep_sip3d", cms3.mus_ip3d()[idx] / cms3.mus_ip3derr()[idx]);
@@ -177,12 +183,14 @@ void wvzModule::LeptonModule::FillOutput()
             {
             "lep_pt",
             "lep_eta",
+            "lep_etaSC",
             "lep_phi",
             "lep_energy",
             "lep_mva",
             "lep_mvaIso",
             "lep_relIso04DB",
             "lep_relIso03EA",
+            "lep_relIso03EAv4",
             "lep_relIso03EAwLep",
             "lep_ip3d",
             "lep_sip3d",
