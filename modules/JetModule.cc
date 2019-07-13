@@ -14,6 +14,7 @@ void wvzModule::JetModule::AddOutput()
     tx->createBranch<vector<float>>("jets_eta");
     tx->createBranch<vector<float>>("jets_phi");
     tx->createBranch<vector<float>>("jets_mass");
+    tx->createBranch<vector<float>>("jets_btag_score");
 
     tx->createBranch<vector<LV>>("jets_cen_p4");
     tx->createBranch<vector<float>>("jets_cen_pt");
@@ -223,6 +224,7 @@ void wvzModule::JetModule::FillOutput()
             tx->pushbackToBranch<float>("jets_eta", jet.eta());
             tx->pushbackToBranch<float>("jets_phi", jet.phi());
             tx->pushbackToBranch<float>("jets_mass", jet.mass());
+            tx->pushbackToBranch<float>("jets_btag_score", current_btag_score_val);
         }
 
         // Adding jets to the container
@@ -271,7 +273,8 @@ void wvzModule::JetModule::FillOutput()
             "jets_pt",
             "jets_eta",
             "jets_phi",
-            "jets_mass"
+            "jets_mass",
+            "jets_btag_score"
             },{},{});
 
     tx->sortVecBranchesByPt("jets_cen_p4",
