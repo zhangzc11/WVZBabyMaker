@@ -23,6 +23,8 @@ void wvzModule::GenPartModule::AddOutput()
     tx->createBranch<vector<int>>("gen_lep_id");
     tx->createBranch<int>("VHchannel");
     tx->createBranch<int>("Higgschannel");
+    tx->createBranch<int>("nGenTauClean");
+    tx->createBranch<int>("nGenTau");
 }
 
 void wvzModule::GenPartModule::FillOutput()
@@ -44,67 +46,53 @@ void wvzModule::GenPartModule::FillOutput()
     vector<LV> higgs_decay_p4;
     vector<int> higgs_decay_id;
 
+    vector<int> tau_from_z_boson_idxs;
+    vector<int> tau_from_w_boson_idxs;
+    vector<int> any_tau_from_z;
+    vector<int> any_tau_from_w;
+
+    vector<int> lepton_from_boson;
+
     for (unsigned int i = 0; i < genPart_pdgId.size(); ++i)
     {
-        if (
-                (abs(genPart_pdgId[i]) == 23 && abs(genPart_motherId[i]) != 25 && genPart_status[i] == 22) or
-                (abs(genPart_pdgId[i]) == 24 && abs(genPart_motherId[i]) != 25 && genPart_status[i] == 22)
-                // (abs(genPart_motherId[i]) == 25 && (genPart_pdgId[i] == 23 or abs(genPart_pdgId[i]) == 24))
-           )
+        // Is Tau lepton
+        if (abs(genPart_pdgId[i]) == 15)
         {
-            gen_V_p4.push_back(genPart_p4[i]);
-            gen_V_id.push_back(genPart_pdgId[i]);
+            if (abs(genPart_motherId[i]) == 23 and (abs(genPart_status[i]) == 2 or abs(genPart_status[i]) == 23))
+            {
+                tau_from_z_boson_idxs.push_back(i);
+            }
+            if (abs(genPart_motherId[i]) == 23)
+            {
+                any_tau_from_z.push_back(i);
+            }
+            if (abs(genPart_motherId[i]) == 24 and (abs(genPart_status[i]) == 2 or abs(genPart_status[i]) == 23))
+            {
+                tau_from_w_boson_idxs.push_back(i);
+            }
+            if (abs(genPart_motherId[i]) == 24)
+            {
+                any_tau_from_w.push_back(i);
+            }
         }
-        if (
-                (genPart_motherId[i] == 25 and genPart_pdgId[i] != 25)
-           )
-        {
-            higgs_decay_p4.push_back(genPart_p4[i]);
-            higgs_decay_id.push_back(genPart_pdgId[i]);
-        }
-        // if (abs(genPart_motherId[i]) == 25 && (genPart_pdgId[i] == 23 or abs(genPart_pdgId[i]) == 24))
-        //     babymaker->coreGenPart.printParticle(genPart_idx[i]);
-        // if (abs(genPart_pdgId[i]) != 24) continue;
-        // if (genPart_status[i] != 22) continue;
-        // if (abs(genPart_motherId[i]) == 25)  isHtoWW     = true;
-        // if (abs(genPart_motherId[i]) != 2)   isWnotFromH = true;
-        // if (isHtoWW && isWnotFromH && !isZthere) break;
+
+        // is Lepton From Boson
+        if (babymaker->coreGenPart.isLeptonFromBoson(genPart_idx[i]))
+            lepton_from_boson.push_back(i);
+
     }
 
-    if (babymaker->looper.getCurrentFileName().Contains("VHToNonbb"))
+    tx->setBranch<int>("nGenTauClean", tau_from_w_boson_idxs.size() + tau_from_z_boson_idxs.size());
+    tx->setBranch<int>("nGenTau", any_tau_from_w.size() + any_tau_from_z.size());
+
+    for (auto& i : lepton_from_boson)
     {
-
-        // H->XX
-        if (higgs_decay_id.size() == 0)
-        {
-            std::cout << "Error: expected to find higgs decay but did not find any" << std::endl;
-        }
-        else if (higgs_decay_id.size() != 2)
-        {
-            std::cout << "Error: found !=2 higgs_decays" << std::endl;
-        }
-        else if (abs(higgs_decay_id[0]) == abs(higgs_decay_id[1]))
-        {
-            tx->setBranch<int>("Higgschannel", abs(higgs_decay_id[0]));
-        }
-        else if (abs(higgs_decay_id[0]) + abs(higgs_decay_id[1]) == 45) // H->Zgamma
-        {
-            tx->setBranch<int>("Higgschannel", 22);
-        }
-        else
-        {
-            std::cout << "Error: inconsistencies in decay id" << std::endl;
-        }
-
-        // Vector boson in VH
-        if (gen_V_p4.size() != 1)
-        {
-            std::cout << "Error: found !=1 associated vector boson" << std::endl;
-        }
-        else
-        {
-            tx->setBranch<int>("VHchannel", abs(gen_V_id[0]));
-        }
+        tx->pushbackToBranch<LV>("gen_lep_p4", genPart_p4[i]);
+        tx->pushbackToBranch<float>("gen_lep_pt", genPart_p4[i].pt());
+        tx->pushbackToBranch<float>("gen_lep_eta", genPart_p4[i].eta());
+        tx->pushbackToBranch<float>("gen_lep_phi", genPart_p4[i].phi());
+        tx->pushbackToBranch<float>("gen_lep_mass", genPart_p4[i].mass());
+        tx->pushbackToBranch<int>("gen_lep_id", genPart_pdgId[i]);
     }
 
 }
