@@ -15,6 +15,8 @@ class wvzBabyMaker: public babyMaker
             kDilep = 2,
             kTrilep = 3,
             kWVZMVA = 4,
+            kTruth = 5,
+            kWVZAll = 6,
         };
 
         RooUtil::Processor* processor;

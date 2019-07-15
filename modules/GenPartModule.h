@@ -15,6 +15,7 @@ namespace wvzModule
             GenPartModule(wvzBabyMaker* parent) { babymaker = parent; }
             virtual void AddOutput();
             virtual void FillOutput();
+            void pruneChildren(std::vector<LV>& child_p4, std::vector<int>& child_idx, float wm0, float wm1);
     };
 }
 

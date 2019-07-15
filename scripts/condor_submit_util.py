@@ -42,6 +42,10 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
         args = "3"
     if job_tag.find("WVZMVA") != -1:
         args = "4"
+    if job_tag.find("Truth") != -1:
+        args = "5"
+    if job_tag.find("WVZAll") != -1:
+        args = "6"
 
     # Change directory to metis
     os.chdir(metis_path)

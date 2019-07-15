@@ -30,6 +30,12 @@ void wvzBabyMaker::PrintBabyMode()
         case kWVZMVA:
             std::cout << "Set to WVZMVA Baby Maker Mode" << std::endl;
             break;
+        case kTruth:
+            std::cout << "Set to Truth Baby Maker Mode" << std::endl;
+            break;
+        case kWVZAll:
+            std::cout << "Set to WVZAll Baby Maker Mode" << std::endl;
+            break;
     }
 }
 
@@ -49,6 +55,13 @@ bool wvzBabyMaker::PassEventList()
             break;
         case kWVZMVA:
             return true;
+            break;
+        case kTruth:
+            return true;
+            break;
+        case kWVZAll:
+            return true;
+            break;
         default:
             return false;
             break;
@@ -140,6 +153,12 @@ void wvzBabyMaker::ProcessElectrons()
         case kWVZMVA:
             coreElectron.process(isPt10POGMVAwpLooseElectron);
             break;
+        case kTruth:
+            coreElectron.process(isPt10POGMVAwpLooseElectron);
+            break;
+        case kWVZAll:
+            coreElectron.process(isPt10POGMVAwpLooseElectron);
+            break;
     }
 }
 
@@ -158,6 +177,12 @@ void wvzBabyMaker::ProcessMuons()
             coreMuon.process(isPt10VeryLooserThanPOGVetoMuon);
             break;
         case kWVZMVA:
+            coreMuon.process(isPt10POGVetoMuon);
+            break;
+        case kTruth:
+            coreMuon.process(isPt10POGVetoMuon);
+            break;
+        case kWVZAll:
             coreMuon.process(isPt10POGVetoMuon);
             break;
     }
@@ -269,6 +294,14 @@ bool wvzBabyMaker::PassSelection()
             return false;
         return true;
     }
+    else if (babyMode == kTruth)
+    {
+        return true;
+    }
+    else if (babyMode == kWVZAll)
+    {
+        return true;
+    }
     else
     {
         return false;
@@ -283,12 +316,19 @@ void wvzBabyMaker::AddOutput()
     processor = new RooUtil::Processor(tx);
 
     // Add the lepton module which handles what variables to write, and how.
-    processor->AddModule(new wvzModule::TriggerModule(this));
-    processor->AddModule(new wvzModule::GenPartModule(this));
-    processor->AddModule(new wvzModule::EventModule(this));
-    processor->AddModule(new wvzModule::LeptonModule(this));
-    processor->AddModule(new wvzModule::METModule(this));
-    processor->AddModule(new wvzModule::JetModule(this));
+    if (babyMode == kTruth)
+    {
+        processor->AddModule(new wvzModule::GenPartModule(this));
+    }
+    else
+    {
+        processor->AddModule(new wvzModule::TriggerModule(this));
+        processor->AddModule(new wvzModule::GenPartModule(this));
+        processor->AddModule(new wvzModule::EventModule(this));
+        processor->AddModule(new wvzModule::LeptonModule(this));
+        processor->AddModule(new wvzModule::METModule(this));
+        processor->AddModule(new wvzModule::JetModule(this));
+    }
 
     // Now create the outputs to the ttree
     processor->AddOutputs();
