@@ -137,6 +137,12 @@ void wvzModule::JetModule::FillOutput()
             case wvzBabyMaker::kWVZMVA:
                 if (babymaker->isMVAPOGLeptonOverlappingWithJet(ijet)) continue;
                 break;
+            case wvzBabyMaker::kWVZAll:
+                if (babymaker->isPOGLeptonOverlappingWithJet(ijet)) continue;
+                break;
+            case wvzBabyMaker::kTruth:
+                if (babymaker->isPOGLeptonOverlappingWithJet(ijet)) continue;
+                break;
         }
 
         // The pt of the jet
