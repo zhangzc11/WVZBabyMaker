@@ -567,6 +567,40 @@ bool wvzBabyMaker::isPt10VeryLooserThanPOGVetoMuon(int idx)
 }
 
 //##############################################################################################################
+// Veto ID of the analysis
+bool wvzBabyMaker::isPt10AnalysisVetoElectron(int idx)
+{
+    if (not( isPt10POGVetoElectron(idx) )) return false;
+    return true;
+}
+
+//##############################################################################################################
+// Veto ID of the analysis
+bool wvzBabyMaker::isPt10AnalysisVetoMuon(int idx)
+{
+    if (not( isPt10POGVetoMuon(idx) )) return false;
+    return true;
+}
+
+//##############################################################################################################
+// Nominal ID of the analysis
+bool wvzBabyMaker::isPt10AnalysisNominalElectron(int idx)
+{
+    if (not( isPt10POGVetoElectron(idx)        )) return false;
+    if (not( isMediumElectronPOGfall17_v2(idx) )) return false;
+    return true;
+}
+
+//##############################################################################################################
+// Nominal ID of the analysis
+bool wvzBabyMaker::isPt10AnalysisNominalMuon(int idx)
+{
+    if (not( isPt10POGVetoMuon(idx)      )) return false;
+    if (not( muRelIso04DB(idx)  < 0.25   )) return false;
+    return true;
+}
+
+//##############################################################################################################
 bool wvzBabyMaker::isLeptonOverlappingWithJet(int ijet)
 {
     bool is_overlapping = false;
