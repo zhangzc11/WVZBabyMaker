@@ -59,9 +59,66 @@ void wvzModule::GenPartModule::FillOutput()
     const vector<int>& genPart_grandmaId = babymaker->coreGenPart.genPart_grandmaId;
     const vector<LV>& genPart_p4 = babymaker->coreGenPart.genPart_p4;
 
+    vector<LV> gen_V_p4;
     vector<int> gen_V_id;
     vector<LV> higgs_decay_p4;
     vector<int> higgs_decay_id;
+
+    for (unsigned int i = 0; i < genPart_pdgId.size(); ++i)
+    {
+        if (
+                (abs(genPart_pdgId[i]) == 23 && abs(genPart_motherId[i]) != 25 && genPart_status[i] == 22) or
+                (abs(genPart_pdgId[i]) == 24 && abs(genPart_motherId[i]) != 25 && genPart_status[i] == 22)
+                // (abs(genPart_motherId[i]) == 25 && (genPart_pdgId[i] == 23 or abs(genPart_pdgId[i]) == 24))
+           )
+        {
+            gen_V_p4.push_back(genPart_p4[i]);
+            gen_V_id.push_back(genPart_pdgId[i]);
+        }
+        if (
+                (genPart_motherId[i] == 25 and genPart_pdgId[i] != 25)
+           )
+        {
+            higgs_decay_p4.push_back(genPart_p4[i]);
+            higgs_decay_id.push_back(genPart_pdgId[i]);
+        }
+    }
+
+    if (babymaker->looper.getCurrentFileName().Contains("VHToNonbb"))
+    {
+
+        // H->XX
+        if (higgs_decay_id.size() == 0)
+        {
+            std::cout << "Error: expected to find higgs decay but did not find any" << std::endl;
+        }
+        else if (higgs_decay_id.size() != 2)
+        {
+            std::cout << "Error: found !=2 higgs_decays" << std::endl;
+        }
+        else if (abs(higgs_decay_id[0]) == abs(higgs_decay_id[1]))
+        {
+            tx->setBranch<int>("Higgschannel", abs(higgs_decay_id[0]));
+        }
+        else if (abs(higgs_decay_id[0]) + abs(higgs_decay_id[1]) == 45) // H->Zgamma
+        {
+            tx->setBranch<int>("Higgschannel", 22);
+        }
+        else
+        {
+            std::cout << "Error: inconsistencies in decay id" << std::endl;
+        }
+
+        // Vector boson in VH
+        if (gen_V_p4.size() != 1)
+        {
+            std::cout << "Error: found !=1 associated vector boson" << std::endl;
+        }
+        else
+        {
+            tx->setBranch<int>("VHchannel", abs(gen_V_id[0]));
+        }
+    }
 
     vector<int> tau_from_z_boson_idxs;
     vector<int> tau_from_w_boson_idxs;
