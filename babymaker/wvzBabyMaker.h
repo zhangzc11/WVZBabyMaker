@@ -35,6 +35,7 @@ class wvzBabyMaker: public babyMaker
         virtual void ProcessObjectsPostPassSelection();
         virtual void ProcessElectrons();
         virtual void ProcessMuons();
+        virtual void ProcessTriggers();
         virtual bool PassSelection();
 
         virtual void AddOutput();
@@ -67,6 +68,8 @@ class wvzBabyMaker: public babyMaker
 #include "LeptonModule.h"
 #include "METModule.h"
 #include "JetModule.h"
+#include "FatJetModule.h"
+#include "AnalysisVariableModule.h"
 
 
 #endif

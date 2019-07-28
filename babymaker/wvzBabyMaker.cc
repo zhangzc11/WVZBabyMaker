@@ -189,6 +189,33 @@ void wvzBabyMaker::ProcessMuons()
 }
 
 //##############################################################################################################
+// Process set of triggers (sometimes it is computational expensive to compare TString so restrict to few trigger set)
+void wvzBabyMaker::ProcessTriggers()
+{
+    switch (babyMode)
+    {
+        case kWVZ:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kTrilep:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kDilep:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kWVZMVA:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kTruth:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kWVZAll:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+    }
+}
+
+//##############################################################################################################
 // Goal is to pass events with at least one fat jet and one lepton
 bool wvzBabyMaker::PassSelection()
 {
@@ -328,6 +355,8 @@ void wvzBabyMaker::AddOutput()
         processor->AddModule(new wvzModule::LeptonModule(this));
         processor->AddModule(new wvzModule::METModule(this));
         processor->AddModule(new wvzModule::JetModule(this));
+        processor->AddModule(new wvzModule::FatJetModule(this));
+        processor->AddModule(new wvzModule::AnalysisVariableModule(this));
     }
 
     // Now create the outputs to the ttree
