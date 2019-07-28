@@ -70,6 +70,7 @@ class wvzBabyMaker: public babyMaker
 #include "JetModule.h"
 #include "FatJetModule.h"
 #include "AnalysisVariableModule.h"
-
+#include "BDTInputVariableModule.h"
+#include "BDTModule.h"
 
 #endif

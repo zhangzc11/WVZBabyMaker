@@ -216,7 +216,6 @@ void wvzBabyMaker::ProcessTriggers()
 }
 
 //##############################################################################################################
-// Goal is to pass events with at least one fat jet and one lepton
 bool wvzBabyMaker::PassSelection()
 {
     if (babyMode == kWVZ)
@@ -357,6 +356,11 @@ void wvzBabyMaker::AddOutput()
         processor->AddModule(new wvzModule::JetModule(this));
         processor->AddModule(new wvzModule::FatJetModule(this));
         processor->AddModule(new wvzModule::AnalysisVariableModule(this));
+        if (babyMode == kWVZ or babyMode == kWVZAll)
+        {
+            processor->AddModule(new wvzModule::BDTInputVariableModule(this));
+            processor->AddModule(new wvzModule::BDTModule(this));
+        }
     }
 
     // Now create the outputs to the ttree
