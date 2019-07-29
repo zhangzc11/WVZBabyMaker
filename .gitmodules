@@ -11,3 +11,6 @@
 	path = ProjectMetis
 	url = git@github.com:aminnj/ProjectMetis.git
 	ignore = dirty
+[submodule "StopAnalysis"]
+	path = StopAnalysis
+	url = git@github.com:cmstas/StopAnalysis.git

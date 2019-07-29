@@ -48,6 +48,14 @@ void wvzModule::GenPartModule::FillOutput()
 {
     tx->setBranch<float>("gen_ht", babymaker->coreGenPart.gen_ht);
 
+    bool doProcess = false;
+    if (babymaker->looper.getCurrentFileName().Contains("WWZ_")) doProcess = true;
+    if (babymaker->looper.getCurrentFileName().Contains("WWZJets")) doProcess = true;
+    if (babymaker->looper.getCurrentFileName().Contains("VHToNonbb")) doProcess = true;
+
+    if (not doProcess)
+        return;
+
     bool isHtoWW = false;
     bool isWnotFromH = false;
     bool isZthere = false;
@@ -518,26 +526,35 @@ void wvzModule::GenPartModule::FillOutput()
     }
     tx->setBranch<int>("nLightLep", nlightlep);
 
-    tx->pushbackToBranch<LV>("gen_V_p4", w_p4[0]);
-    tx->pushbackToBranch<float>("gen_V_pt", w_p4[0].pt());
-    tx->pushbackToBranch<float>("gen_V_eta", w_p4[0].eta());
-    tx->pushbackToBranch<float>("gen_V_phi", w_p4[0].phi());
-    tx->pushbackToBranch<float>("gen_V_mass", w_p4[0].mass());
-    tx->pushbackToBranch<int>("gen_V_id", w_id[0]);
+    if (w_p4.size() > 0)
+    {
+        tx->pushbackToBranch<LV>("gen_V_p4"      , w_p4[0]);
+        tx->pushbackToBranch<float>("gen_V_pt"   , w_p4[0].pt());
+        tx->pushbackToBranch<float>("gen_V_eta"  , w_p4[0].eta());
+        tx->pushbackToBranch<float>("gen_V_phi"  , w_p4[0].phi());
+        tx->pushbackToBranch<float>("gen_V_mass" , w_p4[0].mass());
+        tx->pushbackToBranch<int>("gen_V_id"     , w_id[0]);
+    }
 
-    tx->pushbackToBranch<LV>("gen_V_p4", w_p4[1]);
-    tx->pushbackToBranch<float>("gen_V_pt", w_p4[1].pt());
-    tx->pushbackToBranch<float>("gen_V_eta", w_p4[1].eta());
-    tx->pushbackToBranch<float>("gen_V_phi", w_p4[1].phi());
-    tx->pushbackToBranch<float>("gen_V_mass", w_p4[1].mass());
-    tx->pushbackToBranch<int>("gen_V_id", w_id[1]);
+    if (w_p4.size() > 1)
+    {
+        tx->pushbackToBranch<LV>("gen_V_p4", w_p4[1]);
+        tx->pushbackToBranch<float>("gen_V_pt", w_p4[1].pt());
+        tx->pushbackToBranch<float>("gen_V_eta", w_p4[1].eta());
+        tx->pushbackToBranch<float>("gen_V_phi", w_p4[1].phi());
+        tx->pushbackToBranch<float>("gen_V_mass", w_p4[1].mass());
+        tx->pushbackToBranch<int>("gen_V_id", w_id[1]);
+    }
 
-    tx->pushbackToBranch<LV>("gen_V_p4", z_p4[0]);
-    tx->pushbackToBranch<float>("gen_V_pt", z_p4[0].pt());
-    tx->pushbackToBranch<float>("gen_V_eta", z_p4[0].eta());
-    tx->pushbackToBranch<float>("gen_V_phi", z_p4[0].phi());
-    tx->pushbackToBranch<float>("gen_V_mass", z_p4[0].mass());
-    tx->pushbackToBranch<int>("gen_V_id", 23);
+    if (z_p4.size() > 0)
+    {
+        tx->pushbackToBranch<LV>("gen_V_p4", z_p4[0]);
+        tx->pushbackToBranch<float>("gen_V_pt", z_p4[0].pt());
+        tx->pushbackToBranch<float>("gen_V_eta", z_p4[0].eta());
+        tx->pushbackToBranch<float>("gen_V_phi", z_p4[0].phi());
+        tx->pushbackToBranch<float>("gen_V_mass", z_p4[0].mass());
+        tx->pushbackToBranch<int>("gen_V_id", 23);
+    }
 
     for (auto& idx : wp_child_idx)
     {
