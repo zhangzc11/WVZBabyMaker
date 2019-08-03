@@ -1,5 +1,5 @@
-#ifndef GenPartModule_h
-#define GenPartModule_h
+#ifndef AnalysisVariableModule_h
+#define AnalysisVariableModule_h
 
 #include "rooutil.h"
 #include "wvzBabyMaker.h"
@@ -7,15 +7,14 @@
 namespace wvzModule
 {
     //__________________________________________________________________
-    // GenPart
-    class GenPartModule: public RooUtil::Module
+    // AnalysisVariable module
+    class AnalysisVariableModule: public RooUtil::Module
     {
         public:
             wvzBabyMaker* babymaker;
-            GenPartModule(wvzBabyMaker* parent) { babymaker = parent; }
+            AnalysisVariableModule(wvzBabyMaker* parent) { babymaker = parent; }
             virtual void AddOutput();
             virtual void FillOutput();
-            void pruneChildren(std::vector<LV>& child_p4, std::vector<int>& child_idx, float wm0, float wm1);
     };
 }
 

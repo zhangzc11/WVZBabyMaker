@@ -51,6 +51,8 @@ int main(int argc, char **argv)
         case 2: looper->SetBabyMode(wvzBabyMaker::kDilep); break;
         case 3: looper->SetBabyMode(wvzBabyMaker::kTrilep); break;
         case 4: looper->SetBabyMode(wvzBabyMaker::kWVZMVA); break;
+        case 5: looper->SetBabyMode(wvzBabyMaker::kTruth); break;
+        case 6: looper->SetBabyMode(wvzBabyMaker::kWVZAll); break;
     }
     looper->PrintBabyMode();
     looper->ProcessCMS4(infile, max_events, index, verbose);

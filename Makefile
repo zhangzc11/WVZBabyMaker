@@ -2,7 +2,7 @@
 
 EXE=processBaby
 
-SOURCES=$(wildcard babymaker/*.cc) $(wildcard modules/*.cc) $(wildcard rooutil/rooutil.cc) $(wildcard coreutil/*.cc) $(wildcard CORE/*.cc) $(wildcard CORE/Tools/*.cc) $(wildcard CORE/Tools/MT2/*.cc) $(wildcard CORE/Tools/btagsf/*.cc) $(wildcard CORE/Tools/datasetinfo/*.cc) $(wildcard CORE/Tools/JetResolution/JetResolution.cxx)
+SOURCES=$(wildcard babymaker/*.cc) $(wildcard modules/*.cc) $(wildcard rooutil/rooutil.cc) $(wildcard coreutil/*.cc) $(wildcard CORE/*.cc) $(wildcard CORE/Tools/*.cc) $(wildcard CORE/Tools/MT2/*.cc) $(wildcard CORE/Tools/btagsf/*.cc) $(wildcard CORE/Tools/datasetinfo/*.cc) $(wildcard CORE/Tools/JetResolution/JetResolution.cxx) $(wildcard StopAnalysis/StopCORE/METCorr/*.cc)
 TMPOBJECTS=$(SOURCES:.cc=.o)
 OBJECTS=$(TMPOBJECTS:.cxx=.o)
 
@@ -18,7 +18,7 @@ ROOTLIBS    = $(shell root-config --libs)
 ROOTCFLAGS  = $(shell root-config --cflags)
 CXXFLAGS   += $(ROOTCFLAGS)
 CFLAGS      = $(ROOTCFLAGS) -Wall -Wno-unused-function -g -O2 -fPIC -fno-var-tracking
-EXTRACFLAGS = $(shell rooutil-config) -Icoreutil/ -Imodules/ -ICORE/ -Ibabymaker/
+EXTRACFLAGS = $(shell rooutil-config) -Icoreutil/ -Imodules/ -ICORE/ -Ibabymaker/ -IStopAnalysis/StopCORE/METCorr/
 EXTRAFLAGS  = -fPIC -ITMultiDrawTreePlayer -Wunused-variable -lTMVA -lEG -lGenVector -lXMLIO -lMLP -lTreePlayer
 
 $(EXE): $(OBJECTS)

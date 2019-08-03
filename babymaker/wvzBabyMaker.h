@@ -15,6 +15,8 @@ class wvzBabyMaker: public babyMaker
             kDilep = 2,
             kTrilep = 3,
             kWVZMVA = 4,
+            kTruth = 5,
+            kWVZAll = 6,
         };
 
         RooUtil::Processor* processor;
@@ -33,6 +35,7 @@ class wvzBabyMaker: public babyMaker
         virtual void ProcessObjectsPostPassSelection();
         virtual void ProcessElectrons();
         virtual void ProcessMuons();
+        virtual void ProcessTriggers();
         virtual bool PassSelection();
 
         virtual void AddOutput();
@@ -50,6 +53,10 @@ class wvzBabyMaker: public babyMaker
         static bool isPt10LooserThanPOGVetoMuon(int idx);
         static bool isPt10VeryLooserThanPOGVetoElectron(int idx);
         static bool isPt10VeryLooserThanPOGVetoMuon(int idx);
+        static bool isPt10AnalysisVetoElectron(int idx);
+        static bool isPt10AnalysisVetoMuon(int idx);
+        static bool isPt10AnalysisNominalElectron(int idx);
+        static bool isPt10AnalysisNominalMuon(int idx);
         bool isPOGLeptonOverlappingWithJet(int ijet);
         bool isMVAPOGLeptonOverlappingWithJet(int ijet);
 
@@ -61,6 +68,9 @@ class wvzBabyMaker: public babyMaker
 #include "LeptonModule.h"
 #include "METModule.h"
 #include "JetModule.h"
-
+#include "FatJetModule.h"
+#include "AnalysisVariableModule.h"
+#include "BDTInputVariableModule.h"
+#include "BDTModule.h"
 
 #endif

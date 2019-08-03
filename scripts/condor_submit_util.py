@@ -42,6 +42,10 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
         args = "3"
     if job_tag.find("WVZMVA") != -1:
         args = "4"
+    if job_tag.find("Truth") != -1:
+        args = "5"
+    if job_tag.find("WVZAll") != -1:
+        args = "6"
 
     # Change directory to metis
     os.chdir(metis_path)
@@ -133,7 +137,7 @@ def create_tar_ball(year, baby_type, baby_version_tag):
     os.chdir(main_dir)
     exists = os.path.isfile(tar_gz_path)
     if not exists:
-        os.system("tar -chzf {} ../setup.sh ../processBaby ../coreutil/data ../CORE/Tools/ ../rooutil/*.sh ../rooutil/hadd.py ../rooutil/addHistos.sh ../scale1fbs.txt".format(tar_gz_path))
+        os.system("tar -chzf {} ../setup.sh ../processBaby ../coreutil/data ../CORE/Tools/ ../rooutil/*.sh ../rooutil/hadd.py ../rooutil/addHistos.sh ../scale1fbs.txt ../StopAnalysis/StopCORE/METCorr/".format(tar_gz_path))
 
 #______________________________________________________________________________________
 def submit(dinfos, version_tag, dotestrun=False):

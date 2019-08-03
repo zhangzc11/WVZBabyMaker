@@ -219,6 +219,23 @@ def get_master_list():
             "baby_type" : "WVZMVA"
             }
 
+    sample_info = {
+        "/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                         : "wwz_amcatnlo"               ,
+        "/WWZJetsTo4L2Nu_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                          : "wwz_4l2v_amcatnlo"          ,
+        }
+
+    dinfos["truth_2017_94x"] = {
+            "samples" : sample_info,
+            "year" : 2017,
+            "baby_type" : "Truth"
+            }
+
+    dinfos["wvzsig_2017_94x"] = {
+            "samples" : sample_info,
+            "year" : 2017,
+            "baby_type" : "WVZAll"
+            }
+
     # sample_info = {
     #     "/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                         : "wwz_amcatnlo"               ,
     #     "/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM"                           : "wz_3lv_amcatnlo"            ,
@@ -360,6 +377,23 @@ def get_master_list():
             "baby_type" : "WVZMVA"
             }
 
+    sample_info = {
+        "/WWZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "wwz_amcatnlo"               ,
+        "/WWZJetsTo4L2Nu_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"                     : "wwz_4l2v_amcatnlo"          ,
+        }
+
+    dinfos["truth_2018_102x"] = {
+            "samples" : sample_info,
+            "year" : 2018,
+            "baby_type" : "Truth"
+            }
+
+    dinfos["wvzsig_2018_102x"] = {
+            "samples" : sample_info,
+            "year" : 2018,
+            "baby_type" : "WVZAll"
+            }
+
     # sample_info = {
     #     "/WWZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                  : "wwz_amcatnlo"               ,
     #     "/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                         : "wz_3lv_amcatnlo"            ,
@@ -431,6 +465,16 @@ if __name__ == "__main__":
         master_list["wvzmva_2017_94x"] = grand_master_list["wvzmva_2017_94x"]
     if "WVZMVA2016" in args.sample_sets:
         master_list["wvzmva_2016_94x"] = grand_master_list["wvzmva_2016_94x"]
+    if "Truth2018" in args.sample_sets:
+        master_list["truth_2018_102x"] = grand_master_list["truth_2018_102x"]
+    if "Truth2017" in args.sample_sets:
+        master_list["truth_2017_94x"] = grand_master_list["truth_2017_94x"]
+    if "Truth2016" in args.sample_sets:
+        master_list["truth_2016_94x"] = grand_master_list["truth_2016_94x"]
+    if "WVZSIG2018" in args.sample_sets:
+        master_list["wvzsig_2018_102x"] = grand_master_list["wvzsig_2018_102x"]
+    if "WVZSIG2017" in args.sample_sets:
+        master_list["wvzsig_2017_94x"] = grand_master_list["wvzsig_2017_94x"]
 
     submit(master_list, args.tag, dotestrun=args.test)
 

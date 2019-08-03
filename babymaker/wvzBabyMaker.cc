@@ -30,6 +30,12 @@ void wvzBabyMaker::PrintBabyMode()
         case kWVZMVA:
             std::cout << "Set to WVZMVA Baby Maker Mode" << std::endl;
             break;
+        case kTruth:
+            std::cout << "Set to Truth Baby Maker Mode" << std::endl;
+            break;
+        case kWVZAll:
+            std::cout << "Set to WVZAll Baby Maker Mode" << std::endl;
+            break;
     }
 }
 
@@ -49,6 +55,13 @@ bool wvzBabyMaker::PassEventList()
             break;
         case kWVZMVA:
             return true;
+            break;
+        case kTruth:
+            return true;
+            break;
+        case kWVZAll:
+            return true;
+            break;
         default:
             return false;
             break;
@@ -140,6 +153,12 @@ void wvzBabyMaker::ProcessElectrons()
         case kWVZMVA:
             coreElectron.process(isPt10POGMVAwpLooseElectron);
             break;
+        case kTruth:
+            coreElectron.process(isPt10POGMVAwpLooseElectron);
+            break;
+        case kWVZAll:
+            coreElectron.process(isPt10VeryLooserThanPOGVetoElectron);
+            break;
     }
 }
 
@@ -160,11 +179,43 @@ void wvzBabyMaker::ProcessMuons()
         case kWVZMVA:
             coreMuon.process(isPt10POGVetoMuon);
             break;
+        case kTruth:
+            coreMuon.process(isPt10POGVetoMuon);
+            break;
+        case kWVZAll:
+            coreMuon.process(isPt10VeryLooserThanPOGVetoMuon);
+            break;
     }
 }
 
 //##############################################################################################################
-// Goal is to pass events with at least one fat jet and one lepton
+// Process set of triggers (sometimes it is computational expensive to compare TString so restrict to few trigger set)
+void wvzBabyMaker::ProcessTriggers()
+{
+    switch (babyMode)
+    {
+        case kWVZ:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kTrilep:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kDilep:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kWVZMVA:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kTruth:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+        case kWVZAll:
+            coreTrigger.process(CoreUtil::trigger::kDilepton);
+            break;
+    }
+}
+
+//##############################################################################################################
 bool wvzBabyMaker::PassSelection()
 {
     if (babyMode == kWVZ)
@@ -269,6 +320,14 @@ bool wvzBabyMaker::PassSelection()
             return false;
         return true;
     }
+    else if (babyMode == kTruth)
+    {
+        return true;
+    }
+    else if (babyMode == kWVZAll)
+    {
+        return true;
+    }
     else
     {
         return false;
@@ -283,12 +342,26 @@ void wvzBabyMaker::AddOutput()
     processor = new RooUtil::Processor(tx);
 
     // Add the lepton module which handles what variables to write, and how.
-    processor->AddModule(new wvzModule::TriggerModule(this));
-    processor->AddModule(new wvzModule::GenPartModule(this));
-    processor->AddModule(new wvzModule::EventModule(this));
-    processor->AddModule(new wvzModule::LeptonModule(this));
-    processor->AddModule(new wvzModule::METModule(this));
-    processor->AddModule(new wvzModule::JetModule(this));
+    if (babyMode == kTruth)
+    {
+        processor->AddModule(new wvzModule::GenPartModule(this));
+    }
+    else
+    {
+        processor->AddModule(new wvzModule::TriggerModule(this));
+        processor->AddModule(new wvzModule::GenPartModule(this));
+        processor->AddModule(new wvzModule::EventModule(this));
+        processor->AddModule(new wvzModule::LeptonModule(this));
+        processor->AddModule(new wvzModule::METModule(this));
+        processor->AddModule(new wvzModule::JetModule(this));
+        processor->AddModule(new wvzModule::FatJetModule(this));
+        processor->AddModule(new wvzModule::AnalysisVariableModule(this));
+        if (babyMode == kWVZ or babyMode == kWVZAll)
+        {
+            processor->AddModule(new wvzModule::BDTInputVariableModule(this));
+            processor->AddModule(new wvzModule::BDTModule(this));
+        }
+    }
 
     // Now create the outputs to the ttree
     processor->AddOutputs();
@@ -523,6 +596,40 @@ bool wvzBabyMaker::isPt10VeryLooserThanPOGVetoMuon(int idx)
         if (!( fabs(cms3.mus_dxyPV()[idx]) < 0.1      )) return false;
     }
     // if (!( fabs(cms3.mus_ip3d()[idx] / cms3.mus_ip3derr()[idx]) < 4. )) return false;
+    return true;
+}
+
+//##############################################################################################################
+// Veto ID of the analysis
+bool wvzBabyMaker::isPt10AnalysisVetoElectron(int idx)
+{
+    if (not( isPt10POGVetoElectron(idx) )) return false;
+    return true;
+}
+
+//##############################################################################################################
+// Veto ID of the analysis
+bool wvzBabyMaker::isPt10AnalysisVetoMuon(int idx)
+{
+    if (not( isPt10POGVetoMuon(idx) )) return false;
+    return true;
+}
+
+//##############################################################################################################
+// Nominal ID of the analysis
+bool wvzBabyMaker::isPt10AnalysisNominalElectron(int idx)
+{
+    if (not( isPt10POGVetoElectron(idx)        )) return false;
+    if (not( isMediumElectronPOGfall17_v2(idx) )) return false;
+    return true;
+}
+
+//##############################################################################################################
+// Nominal ID of the analysis
+bool wvzBabyMaker::isPt10AnalysisNominalMuon(int idx)
+{
+    if (not( isPt10POGVetoMuon(idx)      )) return false;
+    if (not( muRelIso04DB(idx)  < 0.25   )) return false;
     return true;
 }
 

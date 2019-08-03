@@ -3,6 +3,7 @@
 
 #include "rooutil.h"
 #include "wvzBabyMaker.h"
+#include "METCorrectionHandler.h"
 
 namespace wvzModule
 {
@@ -12,9 +13,13 @@ namespace wvzModule
     {
         public:
             wvzBabyMaker* babymaker;
-            METModule(wvzBabyMaker* parent) { babymaker = parent; }
+            METCorrectionHandler metcorrector;
+            METObject metobj;
+            METObject metobj_corrected;
+            METModule(wvzBabyMaker* parent) { babymaker = parent; metcorrector.setup(gconf.year, TString::Format("%d", gconf.year), "StopAnalysis/StopCORE/METCorr/METSFs/"); }
             virtual void AddOutput();
             virtual void FillOutput();
+            virtual void correctMET();
     };
 }
 

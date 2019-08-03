@@ -38,6 +38,11 @@ void wvzModule::JetModule::AddOutput()
     tx->createBranch<int>("nb_up");
     tx->createBranch<int>("nb_dn");
     tx->createBranch<int>("nbmed");
+    tx->createBranch<int>("nbmed_up");
+    tx->createBranch<int>("nbmed_dn");
+    tx->createBranch<int>("nbtight");
+    tx->createBranch<int>("nbtight_up");
+    tx->createBranch<int>("nbtight_dn");
     tx->createBranch<float>("ht");
     tx->createBranch<int>("nj_cen");
     tx->createBranch<int>("nj_cen_up");
@@ -48,6 +53,16 @@ void wvzModule::JetModule::AddOutput()
     tx->createBranch<float>("weight_btagsf_heavy_UP");
     tx->createBranch<float>("weight_btagsf_light_DN");
     tx->createBranch<float>("weight_btagsf_light_UP");
+    tx->createBranch<float>("weight_med_btagsf");
+    tx->createBranch<float>("weight_med_btagsf_heavy_DN");
+    tx->createBranch<float>("weight_med_btagsf_heavy_UP");
+    tx->createBranch<float>("weight_med_btagsf_light_DN");
+    tx->createBranch<float>("weight_med_btagsf_light_UP");
+    tx->createBranch<float>("weight_tight_btagsf");
+    tx->createBranch<float>("weight_tight_btagsf_heavy_DN");
+    tx->createBranch<float>("weight_tight_btagsf_heavy_UP");
+    tx->createBranch<float>("weight_tight_btagsf_light_DN");
+    tx->createBranch<float>("weight_tight_btagsf_light_UP");
 
 }
 
@@ -65,6 +80,11 @@ void wvzModule::JetModule::FillOutput()
     int nb_up = 0;
     int nb_dn = 0;
     int nbmed = 0;
+    int nbmed_up = 0;
+    int nbmed_dn = 0;
+    int nbtight = 0;
+    int nbtight_up = 0;
+    int nbtight_dn = 0;
     float ht = 0;
 
     // For deep csv btagging sf
@@ -137,6 +157,12 @@ void wvzModule::JetModule::FillOutput()
             case wvzBabyMaker::kWVZMVA:
                 if (babymaker->isMVAPOGLeptonOverlappingWithJet(ijet)) continue;
                 break;
+            case wvzBabyMaker::kWVZAll:
+                if (babymaker->isPOGLeptonOverlappingWithJet(ijet)) continue;
+                break;
+            case wvzBabyMaker::kTruth:
+                if (babymaker->isPOGLeptonOverlappingWithJet(ijet)) continue;
+                break;
         }
 
         // The pt of the jet
@@ -181,6 +207,7 @@ void wvzModule::JetModule::FillOutput()
 
         float btag_loose_threshold = gconf.WP_DEEPCSV_LOOSE;
         float btag_medium_threshold = gconf.WP_DEEPCSV_MEDIUM;
+        float btag_tight_threshold = gconf.WP_DEEPCSV_TIGHT;
 
         // Counting N-btag jets: Require minimum of 20 GeV for increased acceptance
         if (jet.pt() > 20. and fabs(jet.eta()) < 2.4)
@@ -189,6 +216,7 @@ void wvzModule::JetModule::FillOutput()
             // Increase the counter for the number of b-jets
             if (current_btag_score_val >= btag_loose_threshold) nb++;
             if (current_btag_score_val >= btag_medium_threshold) nbmed++;
+            if (current_btag_score_val >= btag_tight_threshold) nbtight++;
 
             // we will stick with loose b-tagging
             deepcsv_sf_jet_pt.push_back(jet.pt());
@@ -204,6 +232,8 @@ void wvzModule::JetModule::FillOutput()
 
             // Increase the counter for the number of b-jets
             if (current_btag_score_val >= btag_loose_threshold) nb_up++;
+            if (current_btag_score_val >= btag_medium_threshold) nbmed_up++;
+            if (current_btag_score_val >= btag_tight_threshold) nbtight_up++;
 
         }
 
@@ -213,6 +243,8 @@ void wvzModule::JetModule::FillOutput()
 
             // Increase the counter for the number of b-jets
             if (current_btag_score_val >= btag_loose_threshold) nb_dn++;
+            if (current_btag_score_val >= btag_medium_threshold) nbmed_dn++;
+            if (current_btag_score_val >= btag_tight_threshold) nbtight_dn++;
 
         }
 
@@ -249,6 +281,24 @@ void wvzModule::JetModule::FillOutput()
     double wgt_btagsf_fs_dn = 0;
     int WP = 0; // Loose working point 1 or 2 for med or tight
     babymaker->coreBtagDeepCSVSF.getBTagWeight( WP, deepcsv_sf_jet_pt, deepcsv_sf_jet_eta, deepcsv_sf_jet_deepCSV, deepcsv_sf_jet_flavour, wgt_btagsf, wgt_btagsf_hf_up, wgt_btagsf_hf_dn, wgt_btagsf_lf_up, wgt_btagsf_lf_dn, wgt_btagsf_fs_up, wgt_btagsf_fs_dn );
+    double wgt_med_btagsf = 0;
+    double wgt_med_btagsf_hf_up = 0;
+    double wgt_med_btagsf_hf_dn = 0;
+    double wgt_med_btagsf_lf_up = 0;
+    double wgt_med_btagsf_lf_dn = 0;
+    double wgt_med_btagsf_fs_up = 0;
+    double wgt_med_btagsf_fs_dn = 0;
+    WP = 1; // Loose working point 1 or 2 for med or tight
+    babymaker->coreBtagDeepCSVSF.getBTagWeight( WP, deepcsv_sf_jet_pt, deepcsv_sf_jet_eta, deepcsv_sf_jet_deepCSV, deepcsv_sf_jet_flavour, wgt_med_btagsf, wgt_med_btagsf_hf_up, wgt_med_btagsf_hf_dn, wgt_med_btagsf_lf_up, wgt_med_btagsf_lf_dn, wgt_med_btagsf_fs_up, wgt_med_btagsf_fs_dn );
+    double wgt_tight_btagsf = 0;
+    double wgt_tight_btagsf_hf_up = 0;
+    double wgt_tight_btagsf_hf_dn = 0;
+    double wgt_tight_btagsf_lf_up = 0;
+    double wgt_tight_btagsf_lf_dn = 0;
+    double wgt_tight_btagsf_fs_up = 0;
+    double wgt_tight_btagsf_fs_dn = 0;
+    WP = 2; // Loose working point 1 or 2 for med or tight
+    babymaker->coreBtagDeepCSVSF.getBTagWeight( WP, deepcsv_sf_jet_pt, deepcsv_sf_jet_eta, deepcsv_sf_jet_deepCSV, deepcsv_sf_jet_flavour, wgt_tight_btagsf, wgt_tight_btagsf_hf_up, wgt_tight_btagsf_hf_dn, wgt_tight_btagsf_lf_up, wgt_tight_btagsf_lf_dn, wgt_tight_btagsf_fs_up, wgt_tight_btagsf_fs_dn );
 
     tx->setBranch<int>("nj", nj);
     tx->setBranch<int>("nj_up", nj_up);
@@ -257,6 +307,11 @@ void wvzModule::JetModule::FillOutput()
     tx->setBranch<int>("nb_up", nb_up);
     tx->setBranch<int>("nb_dn", nb_dn);
     tx->setBranch<int>("nbmed", nbmed);
+    tx->setBranch<int>("nbmed_up", nbmed_up);
+    tx->setBranch<int>("nbmed_dn", nbmed_dn);
+    tx->setBranch<int>("nbtight", nbmed);
+    tx->setBranch<int>("nbtight_up", nbmed_up);
+    tx->setBranch<int>("nbtight_dn", nbmed_dn);
     tx->setBranch<float>("ht", ht);
     tx->setBranch<int>("nj_cen", nj_cen);
     tx->setBranch<int>("nj_cen_up", nj_cen_up);
@@ -267,6 +322,16 @@ void wvzModule::JetModule::FillOutput()
     tx->setBranch<float>("weight_btagsf_heavy_UP", wgt_btagsf_hf_up);
     tx->setBranch<float>("weight_btagsf_light_DN", wgt_btagsf_lf_dn);
     tx->setBranch<float>("weight_btagsf_light_UP", wgt_btagsf_lf_up);
+    tx->setBranch<float>("weight_med_btagsf"         , wgt_med_btagsf);
+    tx->setBranch<float>("weight_med_btagsf_heavy_DN", wgt_med_btagsf_hf_dn);
+    tx->setBranch<float>("weight_med_btagsf_heavy_UP", wgt_med_btagsf_hf_up);
+    tx->setBranch<float>("weight_med_btagsf_light_DN", wgt_med_btagsf_lf_dn);
+    tx->setBranch<float>("weight_med_btagsf_light_UP", wgt_med_btagsf_lf_up);
+    tx->setBranch<float>("weight_tight_btagsf"         , wgt_tight_btagsf);
+    tx->setBranch<float>("weight_tight_btagsf_heavy_DN", wgt_tight_btagsf_hf_dn);
+    tx->setBranch<float>("weight_tight_btagsf_heavy_UP", wgt_tight_btagsf_hf_up);
+    tx->setBranch<float>("weight_tight_btagsf_light_DN", wgt_tight_btagsf_lf_dn);
+    tx->setBranch<float>("weight_tight_btagsf_light_UP", wgt_tight_btagsf_lf_up);
 
     tx->sortVecBranchesByPt("jets_p4",
             {

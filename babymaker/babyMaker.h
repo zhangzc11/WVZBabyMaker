@@ -149,7 +149,7 @@ public:
 
     virtual void ProcessObjectsPrePassSelection();
     virtual void ProcessObjectsPostPassSelection();
-    void ProcessTriggers();
+    virtual void ProcessTriggers();
     void ProcessGenParticles();
     void ProcessJets();
     void ProcessFatJets();
